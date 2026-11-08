@@ -1,0 +1,37 @@
+Mini HUD 0.4.5
+2026-10-31
+
+Compatibility update for Road to Vostok 0.2.3.0 and 0.2.3.1.
+Updates the reviewed native AI/death compatibility checks so kill observation
+can initialize on these builds. Preserves public 0.4.3's support for the exact
+reviewed AI Actually Loots 1.2.0 death callback. UI, shortcuts, settings,
+defaults and attribution behavior remain unchanged from public 0.4.3.
+Unavailable or detected incomplete kill attribution still shows N/A.
+
+Validation
+- RTV 0.2.3.1 / Steam 26332724, Metro 3.4.2 and MCM 2.9.3: 632 passing
+  native-engine assertions across AIAL enabled/disabled and developer mode
+  on/off. Fixtures use modeled damage bodies and the real AIAL 1.2.0 handler.
+- Focused human AIAL gameplay: two player kills, two verified AIAL callbacks,
+  HUD counts 0 -> 1 -> 2, no HUD N/A or script errors in the played session.
+  The live corpse-hit step was skipped; repeated corpse damage is covered
+  by current actual-AIAL automated checks, not claimed as a new manual pass.
+- Earlier focused 0.2.3.1 checks without AIAL covered trade/combat-close,
+  HUD visibility, a player kill and corpse exclusion, Lore reading/journal,
+  saved Cabin reload and Nomad/Lore persistence. Punisher stop/deployment
+  passed, with two minions and boss activation confirmed in logs.
+- RTV 0.2.3.0 / Steam 26303644: reviewed equivalent critical native contracts
+  and earlier base-candidate engine fixtures; no completed human AIAL pass.
+
+Known limits
+The historical Punisher encounter kill undercount remains unresolved.
+Stop/deployment validation does not establish Punisher kill-count accuracy.
+Full normal mod stacks, MSS, broader maps, other AIAL versions, arbitrary
+combat overrides and general AIAL item conservation were not revalidated.
+Kill counts are not persisted between game launches. Tracing is off by default.
+
+Package
+Every runtime script, icon and license matches the accepted 0.4.3-rtv023.1
+candidate exactly. Only the version metadata and this changelog changed.
+No QA helpers, game source/assets, loader, other mods or saves are included.
+Mini HUD code: MIT. Phosphor Icons: MIT; notices included.

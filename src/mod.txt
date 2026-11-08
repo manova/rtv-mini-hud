@@ -1,0 +1,15 @@
+[mod]
+name="Mini HUD"
+id="rtv_mini_hud"
+version="0.4.5"
+priority=100
+
+[autoload]
+RtvMiniHud="res://rtv-mini-hud/Main.gd"
+
+[hooks]
+"res://Scripts/AI.gd"="WeaponDamage, ExplosionDamage, Death"
+"res://Scripts/Loader.gd"="LoadScene, NewGame, LoadCharacter, ResetCharacter"
+
+[updates]
+source="vostokmods:01a12680-8fdf-74fc-b2f6-2e0ad135de20"
