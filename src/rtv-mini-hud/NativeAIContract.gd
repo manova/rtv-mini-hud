@@ -40,7 +40,12 @@ static func _verify(script: Script) -> bool:
 			elif start >= 0 and lines[i].begins_with("func "):
 				finish = i
 				break
-		if start < 0 or "\n".join(lines.slice(start, finish)).strip_edges().sha256_text() != BLOCKS[name]: return false
+		if start < 0: return false
+		# A later generated section may start with column-zero comments before
+		# its next function. Exclude only that trailing trivia, never body code.
+		while finish > start and (lines[finish - 1].strip_edges().is_empty() or lines[finish - 1].begins_with("#")):
+			finish -= 1
+		if "\n".join(lines.slice(start, finish)).strip_edges().sha256_text() != BLOCKS[name]: return false
 	return true
 
 # Script metadata does not call Object._get_property_list. Admit only a plain

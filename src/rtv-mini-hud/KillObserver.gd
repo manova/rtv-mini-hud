@@ -5,6 +5,7 @@ extends RefCounted
 const Trace := preload("res://rtv-mini-hud/AttributionTrace.gd")
 const Reader := preload("res://rtv-mini-hud/TimerReader.gd")
 const Native := preload("res://rtv-mini-hud/NativeAIContract.gd")
+const Callbacks := preload("res://rtv-mini-hud/CallbackContracts.gd")
 const AI_PATH := "res://Scripts/AI.gd"
 const LOADER_SHA := "30c39e3846957f43925e49ef2449c2ca8f6940c77446af169cfafc858975bcc8"
 const LATE := 1000000
@@ -63,6 +64,7 @@ func install(owner: Node, lib: Object, fixture_script: Script = null) -> void:
 	_add("ai-explosiondamage-pre", _explosion_before, LATE)
 	_add("ai-explosiondamage-post", _explosion_after, EARLY)
 	_add("ai-death-pre", _death_before, EARLY)
+	_add("ai-death-pre", _death_native_before, LATE)
 	_add("ai-death-post", _death_native_after, EARLY)
 	_add("ai-death-post", _death_after, LATE)
 	# Scene/new-game/reset intent is distinct from restoring character data into
@@ -145,7 +147,7 @@ func _trusted_aial_death(row: Dictionary) -> bool:
 	var cb: Callable = row.callback
 	if not cb.is_valid() or row.priority != 100: return false
 	var owner = cb.get_object()
-	if not is_instance_valid(owner) or owner != Engine.get_meta("AIActuallyLoots", null): return false
+	if not is_instance_valid(owner) or not Engine.has_meta("AIActuallyLoots") or owner != Engine.get_meta("AIActuallyLoots"): return false
 	# Equality with a standard method callable excludes bind/unbind/lambda adapters.
 	if cb != Callable(owner, "_on_death"): return false
 	var script: Script = owner.get_script()
@@ -155,17 +157,32 @@ func _trusted_aial_death(row: Dictionary) -> bool:
 	# The pinned source declares a plain field; no foreign getter is invoked.
 	return owner.get("_lib") == _lib
 
-func _death_post_allowance() -> int:
+func _death_allowance(channel: String) -> int:
 	var snapshot: Dictionary = _pending.death_hooks
-	# Keep all native-body and deferred-dispatch gaps unsupported.
-	if snapshot["ai-death-pre"].size() != 1 or not snapshot["ai-death-callback"].is_empty():
-		return -1
-	var allowed := 0
-	for row in snapshot["ai-death-post"]:
-		if row.callback == _death_native_after or row.callback == _death_after: continue
-		if not _trusted_aial_death(row): return -1
-		allowed += 1
-	return allowed if allowed <= 1 else -1
+	if not snapshot["ai-death-callback"].is_empty(): return -1
+	var allowed := {}
+	var owner = _owner.get_ref() if _owner else null
+	var root = owner.get_tree().root if is_instance_valid(owner) and owner.is_inside_tree() else null
+	for row in snapshot[channel]:
+		if row.callback in [_death_before, _death_native_before, _death_native_after, _death_after]: continue
+		var identity := ""
+		if channel == "ai-death-post" and _trusted_aial_death(row):
+			identity = "AIActuallyLoots._on_death@1.2.0"
+		else:
+			identity = Callbacks.identify(row, channel, root, _lib)
+		if identity.is_empty() or allowed.has(identity): return -1
+		allowed[identity] = true
+	return allowed.size()
+
+func _toolkit_snapshot() -> Variant:
+	var owner = _owner.get_ref() if _owner else null
+	if not is_instance_valid(owner) or not owner.is_inside_tree(): return null
+	var root = owner.get_tree().root
+	for row in _pending.death_hooks["ai-death-pre"]:
+		if row.callback in [_death_before, _death_native_before]: continue
+		if Callbacks.identify(row, "ai-death-pre", root, _lib).is_empty(): return null
+		return Callbacks.toolkit_connections(row.callback.get_object(), root)
+	return []
 
 func _ambiguous(message: String) -> void:
 	_session_complete = false
@@ -303,7 +320,8 @@ func _begin(kind: String, actor, args: Array, typed: bool) -> void:
 		"enemy":sensor_type == 0 and faction >= 1 and faction <= 4,
 		"epoch":_epoch, "seq":_lib.seq(), "deaths":0, "death_done":false, "bad":false,
 		"dev":_lib._developer_mode, "dispatch":_dispatch_counts(),
-		"death_hooks":death_hooks, "death_post_allowance":-1}
+		"death_hooks":death_hooks, "death_pre_allowance":-1, "death_pre_done":false,
+		"toolkit_connections":[], "death_post_allowance":-1}
 	if trace.active(): trace.record("damage_begin", {"target":target.get_instance_id(), "kind":kind, "actor":Trace.identity(actor), "player":_pending.player})
 
 func _dispatch_counts() -> Array:
@@ -343,7 +361,14 @@ func _death_before(direction, force) -> void:
 		return
 	var matched := _step(target, 1)
 	_pending.deaths += 1 # Include repeated Death calls even if already dead.
-	if not matched or not _pending.alive: return
+	if not matched: return
+	var allowance := _death_allowance("ai-death-pre")
+	var connections = _toolkit_snapshot()
+	if allowance < 0 or connections == null:
+		_ambiguous("Unverified callback before native death."); return
+	_pending.death_pre_allowance = allowance
+	_pending.toolkit_connections = connections
+	if not _pending.alive: return
 	if _pending.deaths != 1 or not _vector(direction) or not _finite(force):
 		_ambiguous("Repeated or untyped Death witness."); return
 	var expected_vector = _pending.args[2] if _pending.kind == "weapon" else _pending.args[0]
@@ -354,16 +379,35 @@ func _death_before(direction, force) -> void:
 	if target.get(&"dead") != false or (_pending.kind == "weapon" and _pending.expected > 0.0):
 		_ambiguous("Death transition contradicts native damage.")
 
+func _death_native_before(direction, force) -> void:
+	if _pending.is_empty(): return
+	var target = Reader.property(_lib, &"_caller")
+	var allowance: int = _pending.death_pre_allowance
+	if allowance < 0 or _death_allowance("ai-death-pre") != allowance or _toolkit_snapshot() != _pending.toolkit_connections:
+		_ambiguous("Death pre-callback identity or source changed."); return
+	# Consume pre-hook callbacks here, never across the native body.
+	if not _step(target, 0, allowance): return
+	var expected_vector = _pending.args[2] if _pending.kind == "weapon" else _pending.args[0]
+	var expected_force := 10.0 if _pending.kind == "weapon" else 20.0
+	var health = target.get(&"health")
+	if not _vector(direction) or not _finite(force) or direction != expected_vector or float(force) != expected_force or not _finite(health) or float(health) != _pending.expected or target.get(&"dead") != (not _pending.alive):
+		_ambiguous("Death pre-callback changed native damage state."); return
+	_pending.death_pre_done = true
+
 func _death_native_after(_direction, _force) -> void:
 	if _pending.is_empty(): return
 	var target = Reader.property(_lib, &"_caller")
+	if not _pending.death_pre_done:
+		_ambiguous("Native death pre-witness was not completed."); return
+	if _death_allowance("ai-death-pre") != _pending.death_pre_allowance or _toolkit_snapshot() != _pending.toolkit_connections:
+		_ambiguous("Death pre-callback identity or source changed."); return
 	# This is the first post callback. Native Death must still finish at +1.
 	# Checking here prevents a temporary registry substitution inside its body
 	# from borrowing the trusted callback's later sequence budget.
 	if not _step(target): return
 	if target.get(&"dead") != true:
 		_ambiguous("Death did not complete."); return
-	var allowance := _death_post_allowance()
+	var allowance := _death_allowance("ai-death-post")
 	if allowance < 0:
 		_ambiguous("Unverified callback inside the death witness."); return
 	_pending.death_post_allowance = allowance
@@ -372,13 +416,20 @@ func _death_after(_direction, _force) -> void:
 	if _pending.is_empty(): return
 	var target = Reader.property(_lib, &"_caller")
 	var allowance: int = _pending.death_post_allowance
-	if allowance < 0 or _death_post_allowance() != allowance:
+	if allowance < 0 or _death_allowance("ai-death-post") != allowance:
 		_ambiguous("Death callback identity or source changed."); return
 	if not _step(target, 0, allowance): return
 	_pending.death_done = target.get(&"dead") == true
 	if not _pending.death_done: _ambiguous("Death did not complete.")
-	elif allowance == 1 and trace.active():
-		trace.record("verified_death_callback", {"callback":"AIActuallyLoots._on_death", "version":"1.2.0", "target":target.get_instance_id()})
+	elif trace.active():
+		var owner = _owner.get_ref() if _owner else null
+		var root = owner.get_tree().root if is_instance_valid(owner) else null
+		for channel in ["ai-death-pre", "ai-death-post"]:
+			for row in _pending.death_hooks[channel]:
+				var identity := "AIActuallyLoots._on_death@1.2.0" if channel == "ai-death-post" and _trusted_aial_death(row) else Callbacks.identify(row, channel, root, _lib)
+				if not identity.is_empty():
+					var parts := identity.split("@")
+					trace.record("verified_death_callback", {"callback":parts[0], "version":parts[1], "target":target.get_instance_id()})
 
 func _finish(kind: String, actor, args: Array) -> void:
 	if _pending.is_empty(): return
