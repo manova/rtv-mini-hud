@@ -29,9 +29,12 @@ func run(root: Node, lib: Node, hud: Node, _native_ai: Script = null) -> void:
 	if absent_aial: Engine.set_meta("AIActuallyLoots", host)
 	var old = load("res://BaselineObserver.gd").new()
 	observer.uninstall(); old.sync_state(Data.new()); old.install(host, api, AI)
-	ok(old.read().value == "0", "released observer starts numeric with actual companion callbacks")
+	if api.version()=="3.4.2":
+		ok(old.read().value == "0", "released observer starts numeric with actual companion callbacks")
+	else:
+		ok(old.read().value == "N/A" and old.reason == "Unverified Metro API.", "released observer rejects newer loader before combat")
 	damage(target(), player)
-	ok(old.read().value == "N/A" and old.count == 0, "released 0.4.5 reproduces first-death failure with actual companion callbacks")
+	ok(old.read().value == "N/A" and old.count == 0, "released 0.4.5 remains unavailable after first death with actual companion callbacks")
 	old.uninstall(); old = null
 	if absent_aial: Engine.remove_meta("AIActuallyLoots")
 	fresh()

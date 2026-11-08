@@ -2,7 +2,7 @@
 
 A read-only status HUD for Road to Vostok and Metro Mod Loader.
 
-This compatibility candidate retains the released HUD behavior and fails closed when native kill attribution is unavailable. It fixes generated-method comment boundaries and adds source-verified callback compatibility for Vostok Toolkit 5.5.1 and Murdie Lava Lamps 1.1.2, retaining AI Actually Loots 1.2.0 support.
+This compatibility candidate retains the released HUD behavior and fails closed when native kill attribution is unavailable. It fixes generated-method comment boundaries and adds source-verified callback compatibility for Vostok Toolkit 5.5.1 and Murdie Lava Lamps 1.1.2, retaining AI Actually Loots 1.2.0 support. Exact Metro 3.4.2 and 3.5.0 source and wrapper families are recognized; unknown or altered loaders remain unsupported.
 
 This is not compatibility with every version or mod, and not a sandbox against arbitrary in-process code changes. Total Kills/Tally is not supported by this candidate.
 
@@ -12,7 +12,7 @@ Run `python tools/build.py`. The deterministic VMZ is written to `dist/`. Entrie
 
 ## Verification
 
-Run `python -m unittest discover -s tests -v` for package checks. Native regression tests need separately obtained game/loader/companion-mod inputs and are described in `tests/native/README.md`. They use modeled combat, not gameplay. The focused manual in-game pass is complete; see VALIDATION.md for evidence, limits, and the separate Lava-associated shutdown fault. PR review and final release checks remain pending.
+Run `python -m unittest discover -s tests -v` for package checks. Native regression tests need separately obtained game/loader/companion-mod inputs and are described in `tests/native/README.md`. They use modeled combat, not gameplay. The focused Metro 3.4.2 manual in-game pass is complete; a short 3.5.0 gameplay smoke test remains pending; see VALIDATION.md for evidence, limits, and the separate Lava-associated shutdown fault. PR review and final release checks remain pending.
 
 ## Licensing
 

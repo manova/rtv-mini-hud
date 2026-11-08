@@ -4,7 +4,7 @@
 
 The candidate passed 3,250 assertions in 24 fresh native generation/activation phases: minimal, AIAL, Toolkit, Lava, Toolkit+Lava, and Toolkit+Lava+AIAL, each with developer mode off/on. These use modeled combat and actual unchanged companion callbacks, not gameplay. Fixture cleanup clears Engine metadata before exit; those clean exits do not establish ordinary game shutdown safety.
 
-Tested inputs: game 0.2.3.1/build 26332724, native Windows engine 4.6.3, Metro 3.4.2, MCM 2.9.3; AIAL 1.2.0, Toolkit 5.5.1, Lava Lamps 1.1.2. Metro 3.5.0 and Total Kills/Tally are not validated.
+Tested inputs: game 0.2.3.1/build 26332724, native Windows engine 4.6.3, Metro 3.4.2, MCM 2.9.3; AIAL 1.2.0, Toolkit 5.5.1, Lava Lamps 1.1.2. Those original results did not validate Metro 3.5.0; see the additional assessment below. Total Kills/Tally remains unvalidated.
 
 Negative cases cover unknown/deferred/duplicate callbacks, changed priority, source, inherited dependencies and signal recipients, bound adapters, extra native-body dispatch, NPC/corpse attribution, unpaired/nested deaths, lifecycle interruption and immutable incomplete totals. Existing AIAL tests and both generated-source layouts pass. The final package also passed 551 combined-stack and 415 minimal-stack assertions through the portable runner; these repeat scenarios, not additional unique coverage.
 
@@ -12,7 +12,7 @@ Negative cases cover unknown/deferred/duplicate callbacks, changed priority, sou
 
 Fresh isolated launches used the exact candidate with Toolkit and Lava Lamps together, developer mode off. NPC-first play showed no credit for NPC deaths, one credit per player kill, and no extra credit for corpse shots. Retained traces explicitly confirm the first two player kills; screenshots show 0 to 1 to 2 to 3. One credited victim had prior NPC damage.
 
-A separate fresh-process player-first run was observed directly by the tester: first player kill changed 0 to 1 and corpse shots left it at 1. Its log ended before combat and no new screenshot was captured, so this ordering is tester-observed, not independently trace-verified. Capture manifests matched all files. No further combat repetition is required for this focused manual gate.
+A separate fresh-process player-first run was observed directly by the tester: first player kill changed 0 to 1 and corpse shots left it at 1. Its log ended before combat and no new screenshot was captured, so this ordering is tester-observed, not independently trace-verified. Capture manifests matched all files. This completes the original 3.4.2 manual gate. The later 3.5.0 runtime guard change requires a separate short smoke test.
 
 ## Separate shutdown limitation
 
@@ -22,10 +22,20 @@ This establishes a Lava-associated shutdown fault in the tested D3D12/current-dr
 
 ## Release gates and limits
 
-The focused gameplay gate is complete. Exact-commit PR/bot review and final release packaging/checks remain required before publication. CI covers package checks only; native tests require private local inputs. No evidence certifies arbitrary mods/versions, historical Punisher attribution, or all companion features. Compatibility validation is not a security sandbox against arbitrary in-process modification.
+The original 3.4.2 gameplay gate is complete; the later 3.5.0 smoke test is pending. Exact-commit PR/bot review and final release packaging/checks remain required before publication. CI covers package checks only; native tests require private local inputs. No evidence certifies arbitrary mods/versions, historical Punisher attribution, or all companion features. Compatibility validation is not a security sandbox against arbitrary in-process modification.
 
-## Prepared 0.4.6 package
+## Earlier prepared 0.4.6 package (superseded by Metro update)
 
-The final-version archive SHA256 is 12935bd89a229564b849236c753cfd2d2fa3c5e1b85d40b735960d51ffa275c9. Only mod.txt and CHANGELOG.txt differ from the manually tested candidate; all runtime, asset and license bytes are identical. This exact archive passed 966 repeated native assertions across minimal and Toolkit+Lava stacks with developer off/on (eight fresh phases), plus five package checks. These use the explicitly cleaned fixture shutdown path, not normal gameplay quit. Publication remains unperformed.
+The earlier archive SHA256 was 12935bd89a229564b849236c753cfd2d2fa3c5e1b85d40b735960d51ffa275c9. Only mod.txt and CHANGELOG.txt differ from the manually tested candidate; all runtime, asset and license bytes are identical. This exact archive passed 966 repeated native assertions across minimal and Toolkit+Lava stacks with developer off/on (eight fresh phases), plus five package checks. These use the explicitly cleaned fixture shutdown path, not normal gameplay quit. Publication remains unperformed.
 
 Archive entries use ZIP_STORED with pinned platform and permission metadata. Python 3.12 and 3.13 on Windows reproduce the same checksum; CI verifies the committed checksum across Python 3.12, 3.13 and 3.14 on Linux. Compression encoding changes do not alter extracted runtime bytes.
+
+## Metro 3.5.0 assessment
+
+The exact official 3.5.0 release loader SHA256 is 1fa1d7d9dd3029582758a76b00f5d70428fd915e2d54a58a64ca0fdf2f0cd3e7. The prior candidate reproduced N/A in both minimal and Toolkit+Lava stacks: its source-pinned loader and wrapper contracts did not recognize this release. The complete minimal generated AI source differs only by four wrapper local identifier renames. Native bodies and header are unchanged.
+
+The added compatibility accepts the exact official loader and one coherent exact wrapper family, retaining rejection of mixed families, changed bodies, unknown loaders and reflective fields. 3.4.2 regression matrix passed 4,210 assertions across six stacks, each developer off/on. Additional 3.5.0 matrix and refreshed final-head review remain in progress. Fixtures now use the appropriate real developer probe for each Metro version; the old camera argument-conversion regression is exercised by an explicit fixture on 3.5.0, where that released probe no longer exists.
+
+One initial 3.5.0 activation terminated in NVIDIA nvoglv64.dll with 0xc0000409 before assertions; it is excluded, not called a pass. This is distinct from the previously documented Lava exit fault. A subsequent serial run reached the assertions.
+
+A short fresh 3.5.0 gameplay smoke is required before publication: confirm the counter starts numeric, one player kill adds one, corpse shots add none, and NPC kills add none if naturally observed. Prior player-first/NPC-first evidence remains valid for 3.4.2 but is not a substitute for this changed-loader smoke.
