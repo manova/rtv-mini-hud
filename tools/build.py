@@ -10,11 +10,11 @@ def payload(source):
  if set(files)!=EXPECTED:raise ValueError('Unexpected package entry set')
  if len({n.casefold() for n in files})!=len(files):raise ValueError('Case-insensitive collision')
  out=io.BytesIO()
- with zipfile.ZipFile(out,'w',zipfile.ZIP_DEFLATED) as z:
+ with zipfile.ZipFile(out,'w',zipfile.ZIP_STORED) as z:
   for name,data in sorted(files.items()):
    path=PurePosixPath(name)
    if path.is_absolute() or '..' in path.parts or '\\' in name:raise ValueError('Unsafe package path')
-   info=zipfile.ZipInfo(name,(2026,11,8,0,0,0));info.compress_type=zipfile.ZIP_DEFLATED;z.writestr(info,data)
+   info=zipfile.ZipInfo(name,(2026,11,8,0,0,0));info.compress_type=zipfile.ZIP_STORED;info.create_system=3;info.external_attr=0o100644 << 16;z.writestr(info,data)
  return out.getvalue()
 def main():
  parser=argparse.ArgumentParser();parser.add_argument('--output',type=Path)

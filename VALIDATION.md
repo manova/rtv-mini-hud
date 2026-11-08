@@ -26,5 +26,6 @@ The focused gameplay gate is complete. Exact-commit PR/bot review and final rele
 
 ## Prepared 0.4.6 package
 
-The final-version archive SHA256 is 7db707b883ef94398188d03ab084b5eeaed738c635cd9c887784005f6c45fa47. Only mod.txt and CHANGELOG.txt differ from the manually tested candidate; all runtime, asset and license bytes are identical. This exact archive passed 966 repeated native assertions across minimal and Toolkit+Lava stacks with developer off/on (eight fresh phases), plus five package checks. These use the explicitly cleaned fixture shutdown path, not normal gameplay quit. Publication remains unperformed.
+The final-version archive SHA256 is 12935bd89a229564b849236c753cfd2d2fa3c5e1b85d40b735960d51ffa275c9. Only mod.txt and CHANGELOG.txt differ from the manually tested candidate; all runtime, asset and license bytes are identical. This exact archive passed 966 repeated native assertions across minimal and Toolkit+Lava stacks with developer off/on (eight fresh phases), plus five package checks. These use the explicitly cleaned fixture shutdown path, not normal gameplay quit. Publication remains unperformed.
 
+Archive entries use ZIP_STORED with pinned platform and permission metadata. Python 3.12 and 3.13 on Windows reproduce the same checksum; CI verifies the committed checksum across Python 3.12, 3.13 and 3.14 on Linux. Compression encoding changes do not alter extracted runtime bytes.

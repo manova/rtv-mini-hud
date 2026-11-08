@@ -7,6 +7,7 @@ class PackageTests(unittest.TestCase):
  def test_archive(self):
   with zipfile.ZipFile(io.BytesIO(builder.payload(ROOT/'src'))) as z:
    self.assertIsNone(z.testzip());self.assertEqual(set(z.namelist()),builder.EXPECTED)
+   self.assertTrue(all(i.compress_type==zipfile.ZIP_STORED and i.create_system==3 and i.external_attr==(0o100644 << 16) for i in z.infolist()))
    self.assertTrue(all(z.read(n)==(ROOT/'src'/n).read_bytes() for n in z.namelist()))
  def test_trace_defaults_off(self):
   s=(ROOT/'src/rtv-mini-hud/Settings.gd').read_text()

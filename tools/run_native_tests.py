@@ -35,13 +35,10 @@ sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
 source=ROOT/'src'
 (D/'candidate').mkdir(exist_ok=True)
 (D/'runs').mkdir(exist_ok=True)
-# Deliberate version-only metadata in private package; source baseline preserved.
-files={p.relative_to(source).as_posix():p.read_bytes() for p in source.rglob('*') if p.is_file()}
-files['mod.txt']=files['mod.txt'].replace(b'version="0.4.5"',('version="'+VERSION+'"').encode())
+# Use the release builder so the tested archive is byte-identical.
+from build import payload
 archive=D/'candidate'/('rtv_mini_hud-'+VERSION+'.vmz')
-with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED) as z:
- for n,b in sorted(files.items()):
-  info=zipfile.ZipInfo(n,(2026,11,8,0,0,0));info.compress_type=zipfile.ZIP_DEFLATED;z.writestr(info,b)
+archive.write_bytes(payload(source))
 run=D/'runs'/str(time.time_ns());run.mkdir()
 for p in (D/'tests').iterdir():shutil.copy2(p,run/p.name)
 rt=D/'runtime';rows=[]

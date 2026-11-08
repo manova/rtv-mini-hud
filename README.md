@@ -8,7 +8,7 @@ This is not compatibility with every version or mod, and not a sandbox against a
 
 ## Build
 
-Run `python tools/build.py`. The deterministic VMZ is written to `dist/`. Only `src/` files are packaged. No game files, loader, companion mods, profiles, reports or QA helpers belong in the shipped package.
+Run `python tools/build.py`. The deterministic VMZ is written to `dist/`. Entries are stored without compression so their bytes do not depend on host zlib versions. Only `src/` files are packaged. No game files, loader, companion mods, profiles, reports or QA helpers belong in the shipped package.
 
 ## Verification
 
