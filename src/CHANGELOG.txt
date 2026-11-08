@@ -1,28 +1,23 @@
-Mini HUD 0.4.6-compat-test.1
-PRIVATE TEST CANDIDATE - NOT A PUBLIC RELEASE
+Mini HUD 0.4.6
+2026-11-08
 
-Fixes startup validation when Metro appends unrelated section comments after
-its Death wrapper. Adds narrow synchronous-callback compatibility for the
-reviewed Vostok Toolkit 5.5.1 and Murdie Lava Lamps 1.1.2 sources, preserving
-existing AI Actually Loots 1.2.0 support. Other versions are not implied.
+Fixes kill-counter N/A caused by generated-method section comments and the
+reviewed Vostok Toolkit 5.5.1 and Murdie Lava Lamps 1.1.2 death callbacks.
+Retains AI Actually Loots 1.2.0 support. Other versions are not implied.
 
-Keeps native player-final-blow attribution, corpse/NPC exclusions, lifecycle
-checks, source/callback identity checks and incomplete-attribution N/A.
-Toolkit's own totals and assist window are never used for Mini HUD credit.
-Unknown callbacks, changed sources/dependencies or signal recipients remain
-unsupported. This is compatibility validation, not a sandbox against arbitrary
-runtime code changes. Total Kills/Tally support is not included.
+Preserves native player-final-blow attribution: NPC kills and repeat corpse
+shots do not add credit. Other mods' kill totals and assist windows are not
+used. Unknown or changed callbacks remain unsupported and fail closed to N/A.
 
-Validation: 3,250 passing native-engine assertions across six stacks with
-developer mode off/on, fresh generation/activation, actual companion callbacks
-and modeled combat. Native game 0.2.3.1/build26332724, Metro3.4.2, MCM2.9.3.
-This includes old-release first-death failure reproduction, real Toolkit
-bookkeeping/killfeed and Lava boss-unlock file writes in isolated profiles.
-Independent static review and deterministic package checks passed.
+Tested on game 0.2.3.1/build 26332724, Metro 3.4.2 and MCM 2.9.3. Focused live
+player-first and NPC-first tests passed, plus modeled-combat regression checks.
+This does not certify arbitrary mod stacks, Metro 3.5.0, Total Kills/Tally,
+or historical Punisher encounter attribution.
 
-Manual in-game testing is NOT YET COMPLETE. No public release or normal
-installation has been performed. Existing broader-gameplay and Punisher
-encounter limitations remain. Do not claim arbitrary-mod compatibility.
+Known test-environment limitation: Lava Lamps 1.1.2 was associated with a crash
+on normal game exit, including without Mini HUD. It can leave game logs
+incomplete. Mini HUD alone and Toolkit alone exited cleanly. Cause and wider
+reproducibility remain unconfirmed; this release does not fix that exit crash.
 
 Mini HUD 0.4.5
 2026-10-31

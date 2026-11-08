@@ -20,4 +20,4 @@ Only SHA computation is cached: current source strings and paths are compared at
 
 ## Limits
 
-This is source-pinned compatibility validation, not an adversarial in-process sandbox. Arbitrary runtime code/data changes and native bypasses are not guaranteed to be detected. Other companion versions, Total Kills/Tally, full mod stacks, general Toolkit/Lava behavior and historical Punisher encounter attribution remain outside this pass. A short manual gameplay pass and repository bot review remain release gates.
+This is source-pinned compatibility validation, not an adversarial in-process sandbox. Arbitrary runtime code/data changes and native bypasses are not guaranteed to be detected. Other companion versions, Total Kills/Tally, full mod stacks, general Toolkit/Lava behavior and historical Punisher encounter attribution remain outside this pass. The focused manual gameplay pass is complete; exact-commit repository bot review and final package checks remain release gates.

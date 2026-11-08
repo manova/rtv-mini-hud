@@ -23,3 +23,8 @@ This establishes a Lava-associated shutdown fault in the tested D3D12/current-dr
 ## Release gates and limits
 
 The focused gameplay gate is complete. Exact-commit PR/bot review and final release packaging/checks remain required before publication. CI covers package checks only; native tests require private local inputs. No evidence certifies arbitrary mods/versions, historical Punisher attribution, or all companion features. Compatibility validation is not a security sandbox against arbitrary in-process modification.
+
+## Prepared 0.4.6 package
+
+The final-version archive SHA256 is 7db707b883ef94398188d03ab084b5eeaed738c635cd9c887784005f6c45fa47. Only mod.txt and CHANGELOG.txt differ from the manually tested candidate; all runtime, asset and license bytes are identical. This exact archive passed 966 repeated native assertions across minimal and Toolkit+Lava stacks with developer off/on (eight fresh phases), plus five package checks. These use the explicitly cleaned fixture shutdown path, not normal gameplay quit. Publication remains unperformed.
+
