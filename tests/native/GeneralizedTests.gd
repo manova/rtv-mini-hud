@@ -82,11 +82,14 @@ func run(root: Node, lib: Node, hud: Node, native_ai: Script) -> void:
     ok(observer.read().value=="6","player explosion counted")
     # Anonymous unrelated callbacks and diagnostics are ordinary compatible work.
     ids.append(api.hook("unrelated-ui-pre",func(_value): pass,777))
-    var probes_before=Engine.get_meta("_rtv_probe_counts",{}).get("loader_pp",0)
+    var probe_key = "loader_pp" if api.version()=="3.4.2" else "menu_ready"
+    var probes_before=Engine.get_meta("_rtv_probe_counts",{}).get(probe_key,0)
     for i in 25:
         api._dispatch("unrelated-ui-pre",[i])
-        if api._developer_mode: api._dispatch("loader-_physics_process-pre",[0.016])
-    if api._developer_mode: ok(Engine.get_meta("_rtv_probe_counts",{}).get("loader_pp",0)>=probes_before+25,"real released anonymous diagnostic actually executed")
+        if api._developer_mode:
+            if api.version()=="3.4.2": api._dispatch("loader-_physics_process-pre",[0.016])
+            else: api._dispatch("menu-_ready-pre",[])
+    if api._developer_mode: ok(Engine.get_meta("_rtv_probe_counts",{}).get(probe_key,0)>=probes_before+25,"real released anonymous diagnostic actually executed")
     damage(target(),player)
     ok(observer.read().value=="7","unrelated anonymous callbacks and real released diagnostics accepted")
     ids.append(api.hook("ai-weapondamage-pre",func(_h,_d,_v,_a): pass,0))
@@ -152,11 +155,15 @@ func run(root: Node, lib: Node, hud: Node, native_ai: Script) -> void:
         conversion.callback=func(): damage.bind(delayed,player,0.0).call_deferred()
         var first_args: Dictionary=Engine.get_meta("_rtv_probe_first_args",{})
         var saved=first_args.duplicate();first_args.erase("camera_pp")
+        # 3.5.0 removed the argument-stringifying camera probe. Retain the
+        # observer regression with an explicit fixture, not a claimed released probe.
+        if api.version()=="3.5.0":
+            ids.append(api.hook("camera-_physics_process-pre",func(value): var rendered = str(value),100))
         api._dispatch("camera-_physics_process-pre",[conversion])
         await tree.process_frame
         await tree.process_frame
-        ok(conversion.calls==1,"released anonymous MML probe converted the explicit fixture Object once")
-        unavailable("later queued damage from released diagnostic conversion cannot steal NPC kill")
+        ok(conversion.calls==1,"legacy probe/explicit fixture converted the Object once")
+        unavailable("later queued damage from diagnostic conversion cannot steal NPC kill")
         ok(observer.count==0 and delayed.original_calls==2,"deferred conversion regression retains correct no-credit outcome")
         Engine.set_meta("_rtv_probe_first_args",saved)
     fresh()

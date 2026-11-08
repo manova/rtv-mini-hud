@@ -7,7 +7,10 @@ const Reader := preload("res://rtv-mini-hud/TimerReader.gd")
 const Native := preload("res://rtv-mini-hud/NativeAIContract.gd")
 const Callbacks := preload("res://rtv-mini-hud/CallbackContracts.gd")
 const AI_PATH := "res://Scripts/AI.gd"
-const LOADER_SHA := "30c39e3846957f43925e49ef2449c2ca8f6940c77446af169cfafc858975bcc8"
+const LOADER_SHAS := {
+ "30c39e3846957f43925e49ef2449c2ca8f6940c77446af169cfafc858975bcc8": "3.4.2",
+ "1fa1d7d9dd3029582758a76b00f5d70428fd915e2d54a58a64ca0fdf2f0cd3e7": "3.5.0"
+}
 const LATE := 1000000
 const EARLY := -1000000
 # A narrow, source-verified exception for synchronous corpse bookkeeping.
@@ -50,7 +53,7 @@ func install(owner: Node, lib: Object, fixture_script: Script = null) -> void:
 		reason = "Metro is not ready."
 		return
 	var loader: Script = lib.get_script()
-	if loader == null or not loader.has_source_code() or loader.source_code.replace("\r\n", "\n").sha256_text() != LOADER_SHA:
+	if loader == null or not loader.has_source_code() or not LOADER_SHAS.has(loader.source_code.replace("\r\n", "\n").sha256_text()):
 		reason = "Unverified Metro API."
 		return
 	_script = fixture_script if fixture_script != null else load(AI_PATH)
@@ -81,7 +84,7 @@ func install(owner: Node, lib: Object, fixture_script: Script = null) -> void:
 	reason = ""
 	var conflict := _coverage()
 	if not conflict.is_empty(): reason = conflict
-	print("[Mini HUD] Native final-blow observer installed; unchanged Metro 3.4.2.")
+	print("[Mini HUD] Native final-blow observer installed; verified Metro ", LOADER_SHAS[loader.source_code.replace("\r\n", "\n").sha256_text()], ".")
 
 func _add(name: String, callback: Callable, priority: int) -> void:
 	var id: int = _lib.hook(name, callback, priority)

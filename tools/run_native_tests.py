@@ -16,7 +16,8 @@ for name,path in paths.items():
  if not path.is_file():raise SystemExit('Missing input: '+name)
 approved=json.loads((ROOT/'tools/accepted-input-sha256.json').read_text())
 for name,path in paths.items():
- if file_sha(path)!=approved[name]:raise SystemExit('Input identity mismatch: '+name)
+ identities=approved[name] if isinstance(approved[name],list) else [approved[name]]
+ if file_sha(path) not in identities:raise SystemExit('Input identity mismatch: '+name)
 D=ROOT/'.local'
 if D.resolve().parent!=ROOT.resolve() or D.is_symlink() or getattr(D,'is_junction',lambda:False)():raise SystemExit('Unsafe local test root')
 D.mkdir(exist_ok=True)

@@ -4,7 +4,7 @@ These are owned synthetic fixtures plus Metro-style test dispatch wrappers. They
 
 `python tools/run_native_tests.py --inputs inputs.local.json`
 
-The private JSON must map these keys to local files: `engine` (RTV.exe), `game_pack` (RTV.pck), `loader` (Metro 3.4.2 modloader.gd), `class_cache` (the game's global_script_class_cache.cfg), `mcm` (2.9.3 archive), `toolkit` (5.5.1 archive), `lava` (1.1.2 archive), `aial` (1.2.0 archive), `captured_minimal` and `captured_broad` (locally generated native AI snapshots for minimal and registry layouts).
+The private JSON must map these keys to local files: `engine` (RTV.exe), `game_pack` (RTV.pck), `loader` (official Metro 3.4.2 or 3.5.0 modloader.gd), `class_cache` (the game's global_script_class_cache.cfg), `mcm` (2.9.3 archive), `toolkit` (5.5.1 archive), `lava` (1.1.2 archive), `aial` (1.2.0 archive), `captured_minimal` and `captured_broad` (locally generated native AI snapshots for minimal and registry layouts).
 
 These inputs are excluded from version control. Obtain/run third-party software only with the necessary permission. The runner uses fresh profiles under `.local/`, independent executable/game copies, hidden Windows renderer activation, and retained logs/results. It never uses real saves. Existing `.local/runtime` copies must match input bytes. Run only one native matrix at a time.
 

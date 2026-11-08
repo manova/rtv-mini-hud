@@ -59,7 +59,7 @@ func run():
 		var actual: Script=load("res://Scripts/AI.gd")
 		var contract=load("res://rtv-mini-hud/NativeAIContract.gd")
 		check(contract.verified(actual),"candidate accepts actual generated native contract")
-		check(load("res://BaselineContract.gd").verified(actual)==broad,"released verifier distinguishes minimal and registry layouts")
+		check(load("res://BaselineContract.gd").verified(actual)==(broad and lib.version()=="3.4.2"),"released verifier distinguishes minimal and registry layouts")
 		var after_death:=actual.source_code.substr(actual.source_code.find("\nfunc Death("))
 		var next_func:=after_death.find("\nfunc ",2)
 		check(after_death.substr(next_func).begins_with("\nfunc UpdateStatus(" if broad else "\nfunc _rtv_apply_ai_loadouts("),"next function after Death matches layout mechanism")
