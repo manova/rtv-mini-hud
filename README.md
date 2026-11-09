@@ -12,7 +12,7 @@ Run `python tools/build.py`. The deterministic VMZ is written to `dist/`. Entrie
 
 ## Verification
 
-Run `python -m unittest discover -s tests -v` for package checks. Native regression tests need separately obtained game/loader/companion-mod inputs and are described in `tests/native/README.md`. They use modeled combat, not gameplay. The focused Metro 3.4.2 manual in-game pass is complete; a short 3.5.0 gameplay smoke test remains pending; see VALIDATION.md for evidence, limits, and the separate Lava-associated shutdown fault. PR review and final release checks remain pending.
+Run `python -m unittest discover -s tests -v` for package checks. Native regression tests need separately obtained game/loader/companion-mod inputs and are described in `tests/native/README.md`. They use modeled combat, not gameplay. Focused Metro 3.4.2 and 3.5.0 manual gameplay passes are complete; see VALIDATION.md for evidence, limits, and the separate Lava-associated shutdown fault. Release packaging preserves the reviewed and gameplay-tested runtime bytes.
 
 ## Licensing
 

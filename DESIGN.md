@@ -20,7 +20,7 @@ Only SHA computation is cached: current source strings and paths are compared at
 
 ## Limits
 
-This is source-pinned compatibility validation, not an adversarial in-process sandbox. Arbitrary runtime code/data changes and native bypasses are not guaranteed to be detected. Other companion versions, Total Kills/Tally, full mod stacks, general Toolkit/Lava behavior and historical Punisher encounter attribution remain outside this pass. The focused Metro 3.4.2 manual gameplay pass is complete; a short 3.5.0 smoke test, exact-commit repository bot review and final package checks remain release gates.
+This is source-pinned compatibility validation, not an adversarial in-process sandbox. Arbitrary runtime code/data changes and native bypasses are not guaranteed to be detected. Other companion versions, Total Kills/Tally, full mod stacks, general Toolkit/Lava behavior and historical Punisher encounter attribution remain outside this pass. Focused Metro 3.4.2 and 3.5.0 gameplay passes are complete. The runtime has passed exact-commit repository bot review and package checks; release metadata changes do not alter runtime bytes.
 
 ## Metro 3.5.0 compatibility
 

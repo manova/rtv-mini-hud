@@ -10,10 +10,11 @@ Preserves native player-final-blow attribution: NPC kills and repeat corpse
 shots do not add credit. Other mods' kill totals and assist windows are not
 used. Unknown or changed callbacks remain unsupported and fail closed to N/A.
 
-Tested on game 0.2.3.1/build 26332724, Metro 3.4.2 and MCM 2.9.3. Focused live
-player-first and NPC-first tests passed, plus modeled-combat regression checks.
-Metro 3.5.0 automated compatibility checks are separate from that live pass;
-a fresh gameplay smoke test on 3.5.0 remains pending before publication.
+Tested on game 0.2.3.1/build 26332724, Metro 3.4.2/3.5.0 and MCM 2.9.3.
+Focused 3.4.2 player-first and NPC-first gameplay tests passed. A fresh 3.5.0
+smoke confirmed seven player kills and no extra credit from corpse shots; no
+NPC kills occurred in that run. Both loader versions passed 4,210 modeled-
+combat regression assertions each, separately from gameplay evidence.
 This does not certify arbitrary mod stacks, Total Kills/Tally,
 or historical Punisher encounter attribution.
 
