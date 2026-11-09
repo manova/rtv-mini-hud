@@ -1,0 +1,3 @@
+* text=auto eol=lf
+# Preserve exact tested package bytes, including mod.txt line endings.
+src/** -text

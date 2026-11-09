@@ -1,3 +1,28 @@
+Mini HUD 0.4.6
+2026-11-08
+
+Fixes kill-counter N/A caused by generated-method section comments and the
+reviewed Vostok Toolkit 5.5.1 and Murdie Lava Lamps 1.1.2 death callbacks.
+Retains AI Actually Loots 1.2.0 support. Recognizes exact Metro 3.4.2 and
+3.5.0 loader/wrapper sources. Other versions are not implied.
+
+Preserves native player-final-blow attribution: NPC kills and repeat corpse
+shots do not add credit. Other mods' kill totals and assist windows are not
+used. Unknown or changed callbacks remain unsupported and fail closed to N/A.
+
+Tested on game 0.2.3.1/build 26332724, Metro 3.4.2/3.5.0 and MCM 2.9.3.
+Focused 3.4.2 player-first and NPC-first gameplay tests passed. A fresh 3.5.0
+smoke confirmed seven player kills and no extra credit from corpse shots; no
+NPC kills occurred in that run. Both loader versions passed 4,210 modeled-
+combat regression assertions each, separately from gameplay evidence.
+This does not certify arbitrary mod stacks, Total Kills/Tally,
+or historical Punisher encounter attribution.
+
+Known test-environment limitation: Lava Lamps 1.1.2 was associated with a crash
+on normal game exit, including without Mini HUD. It can leave game logs
+incomplete. Mini HUD alone and Toolkit alone exited cleanly. Cause and wider
+reproducibility remain unconfirmed; this release does not fix that exit crash.
+
 Mini HUD 0.4.5
 2026-10-31
 
