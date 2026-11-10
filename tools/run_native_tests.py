@@ -6,6 +6,7 @@ ROOT=Path(__file__).resolve().parents[1]
 parser=argparse.ArgumentParser(description="Run isolated native tests with separately obtained licensed local inputs")
 parser.add_argument('--inputs',type=Path,required=True)
 parser.add_argument('--stacks',nargs='+',choices=['minimal','aial','toolkit','lava','combined','aial-combined'],default=['minimal','aial','toolkit','lava','combined','aial-combined'])
+parser.add_argument('--feed-state', choices=['absent','inactive','active'], default='active')
 args=parser.parse_args()
 inputs=json.loads(args.inputs.read_text())
 def file_sha(path):
@@ -21,13 +22,14 @@ for name,path in paths.items():
 D=ROOT/'.local'
 if D.resolve().parent!=ROOT.resolve() or D.is_symlink() or getattr(D,'is_junction',lambda:False)():raise SystemExit('Unsafe local test root')
 D.mkdir(exist_ok=True)
-for name in ['runtime','tests','runs','candidate']:
+runtime_name='runtime-'+file_sha(paths['loader'])[:12]
+for name in [runtime_name,'tests','runs','candidate']:
  folder=D/name
  if folder.resolve().parent!=D.resolve() or folder.is_symlink() or getattr(folder,'is_junction',lambda:False)():raise SystemExit('Unsafe test folder: '+name)
  folder.mkdir(exist_ok=True)
 for p in (ROOT/'tests/native').iterdir():shutil.copy2(p,D/'tests'/p.name)
 for key,name in [('engine','CompatProbe.exe'),('game_pack','RTV.pck'),('loader','modloader.gd'),('class_cache','global_script_class_cache.cfg')]:
- dst=D/'runtime'/name
+ dst=D/runtime_name/name
  if not dst.exists():shutil.copy2(paths[key],dst)
  elif dst.stat().st_size!=paths[key].stat().st_size or file_sha(dst)!=file_sha(paths[key]):raise SystemExit('Unexpected existing runtime copy: '+name)
 for key,name in [('captured_minimal','captured-minimal.gd.txt'),('captured_broad','captured-broad.gd.txt')]:shutil.copy2(paths[key],D/'tests'/name)
@@ -42,10 +44,13 @@ archive=D/'candidate'/('rtv_mini_hud-'+VERSION+'.vmz')
 archive.write_bytes(payload(source))
 run=D/'runs'/str(time.time_ns());run.mkdir()
 for p in (D/'tests').iterdir():shutil.copy2(p,run/p.name)
-rt=D/'runtime';rows=[]
+rt=D/runtime_name;rows=[]
+with zipfile.ZipFile(paths['toolkit']) as z:
+ toolkit_version=re.search(r'(?m)^version\s*=\s*"([^"]+)"',z.read('mod.txt').decode('utf-8-sig')).group(1)
+if toolkit_version=='5.5.1' and args.feed_state!='active':parser.error('absent/inactive feed fixtures require VTK contract-v1 input')
 for stack in args.stacks:
  for dev in [False,True]:
-  case=stack+('-dev' if dev else '-off');profile=run/'profiles'/case;profile.mkdir(parents=True)
+  case=stack+'-'+args.feed_state+('-dev' if dev else '-off');profile=run/'profiles'/case;profile.mkdir(parents=True)
   case_rt=rt;mods=rt/'mods';mods.mkdir(exist_ok=True)
   if mods.resolve().parent!=rt.resolve() or mods.is_symlink() or getattr(mods,'is_junction',lambda:False)():raise SystemExit('Unsafe disposable mods folder')
   for old in mods.iterdir():
@@ -55,13 +60,16 @@ for stack in args.stacks:
   keys={'doinkoink-mcm@2.9.3':-100,'rtv_mini_hud@'+VERSION:100}
   toolkit='toolkit' in stack or 'combined' in stack;lava='lava' in stack or 'combined' in stack;aial=stack.startswith('aial')
   if toolkit:
-   desired['VostokToolkit-5.5.1.vmz']=paths['toolkit'];keys['vostok-toolkit@5.5.1']=0
+   desired['VostokToolkit-'+toolkit_version+'.vmz']=paths['toolkit'];keys['vostok-toolkit@'+toolkit_version]=0
   if lava:
    desired['MurdieLavaLamps-1.1.2.vmz']=paths['lava'];keys['MurdieLavaLamps@1.1.2']=0
   if aial:
    desired['AIActuallyLoots.vmz']=paths['aial'];keys['ai_actually_loots@1.2.0']=0
   for n,p in desired.items():shutil.copy2(p,mods/n)
-  config={'registry':lava,'aial':aial,'count':len(keys),'toolkit':toolkit,'lava':lava,'userdata':str(profile.resolve())}
+  config={'registry':lava,'aial':aial,'count':len(keys),'toolkit':toolkit,'lava':lava,'userdata':str(profile.resolve()),'feed_state':args.feed_state,'toolkit_version':toolkit_version}
+  if toolkit and args.feed_state=='absent':
+   cfg=profile/'MCM/vostok-toolkit/config.ini';cfg.parent.mkdir(parents=True)
+   cfg.write_text('[Bool]\n'+''.join(k+'={"value":false}\n' for k in ['kill_counter_enabled','kill_feed_enabled','kill_streak_enabled']))
   (profile/'case.json').write_text(json.dumps(config))
   (profile/'mod_config.cfg').write_text('[settings]\ndeveloper_mode='+str(dev).lower()+'\nactive_profile="Default"\n[profile.Default.enabled]\n'+''.join(k+'=true\n' for k in keys)+'[profile.Default.priority]\n'+''.join(k+'='+str(v)+'\n' for k,v in keys.items()))
   (profile/'inventory.json').write_text(json.dumps({n:sha(p) for n,p in desired.items()},indent=2))

@@ -2,6 +2,8 @@ extends "res://GeneralizedTests.gd"
 var toolkit: Node
 var lava: Node
 var feed: Node
+var contract_v1 := false
+var feed_active := true
 
 func reject(label: String):
 	print("NEGATIVE_DIAG ", JSON.stringify({"test":label,"value":observer.read().value,"count":observer.count,"reason":observer.reason}))
@@ -21,8 +23,22 @@ func run(root: Node, lib: Node, hud: Node, _native_ai: Script = null) -> void:
 	player = Node3D.new(); player.name = "ID"; npc = Node3D.new()
 	map.add_child(core); core.add_child(camera); camera.add_child(player); map.add_child(npc)
 	tree.root.add_child(map); tree.current_scene = map; player.add_to_group("Player")
+	contract_v1 = toolkit != null and toolkit.get_script().get_script_constant_map().get("OBSERVER_CONTRACT") == 1
+	var config = JSON.parse_string(FileAccess.get_file_as_string("user://case.json"))
+	feed_active = config.feed_state == "active"
+	if toolkit and contract_v1:
+		var features = tree.root.get_node("VTKUI")._features
+		if config.feed_state == "absent":
+			ok(feed == null and toolkit.get_signal_connection_list("kill_event").is_empty(), "HUD never enabled has no feed and no connections")
+		else:
+			features.set_hud(true, true, true)
+			feed = tree.root.get_node_or_null("VTKKC_Canvas/VTKFeed")
+			ok(feed != null, "contract feed has explicit live identity")
+			features.set_hud(feed_active, feed_active, feed_active)
+			ok(toolkit.get_signal_connection_list("kill_event").size() == 1, "active or inactive created feed remains connected")
 	if feed:
-		feed._enabled = true; feed._was_shelter = false; feed.clear()
+		if not contract_v1: feed._enabled = true
+		feed._was_shelter = false; feed.clear(); feed.set_process(false)
 	fresh()
 	var absent_aial := not Engine.has_meta("AIActuallyLoots")
 	# Prevent old get_meta(null) diagnostic noise; this sentinel is not a trusted owner.
@@ -46,7 +62,7 @@ func run(root: Node, lib: Node, hud: Node, _native_ai: Script = null) -> void:
 	if toolkit:
 		ok(toolkit._kill_count == start_count + 1 and toolkit._seen_deaths.has(victim.get_instance_id()), "actual Toolkit bookkeeping executed")
 		ok(not toolkit._last_damager.has(victim.get_instance_id()), "actual Toolkit attacker bookkeeping consumed")
-	if feed: ok(feed._rows.size() == mini(start_rows + 1, 5), "actual Toolkit killfeed signal rendered row")
+	if feed: ok(feed._rows.size() == (mini(start_rows + 1, 5) if feed_active else 0), "actual Toolkit feed obeys active/inactive state")
 	damage(victim, player); victim.ExplosionDamage(Vector3.UP, player)
 	ok(observer.read().value == "1", "actual companion callback corpse repetitions do not add credit")
 	fresh()
@@ -84,7 +100,10 @@ func run(root: Node, lib: Node, hud: Node, _native_ai: Script = null) -> void:
 			reject("bound companion method rejected " + channel); row.callback = original
 			fresh(); var script: Script = owner.get_script(); var source: String = script.source_code
 			script.source_code = source + "\n# altered callback source fixture\n"
-			damage(target(), player); reject("changed companion source rejected " + channel)
+			damage(target(), player)
+			if owner == toolkit and contract_v1:
+				ok(observer.read().value == "1", "contract-v1 unrelated source edits do not require a hash refresh")
+			else: reject("changed companion source rejected " + channel)
 			script.source_code = source
 			fresh(); var before_lib = owner._lib; owner._lib = null
 			# Do not execute a broken third-party callback; directly evaluate its trust gate.
@@ -119,13 +138,17 @@ func run(root: Node, lib: Node, hud: Node, _native_ai: Script = null) -> void:
 			fresh()
 			var source: String = feed.get_script().source_code
 			feed.get_script().source_code = source + "\n# changed signal recipient fixture\n"
-			damage(target(), player); reject("changed Toolkit signal source rejected")
+			damage(target(), player)
+			if contract_v1: ok(observer.read().value == "1", "contract-v1 UI source edit stays compatible")
+			else: reject("changed Toolkit signal source rejected")
 			feed.get_script().source_code = source
 		fresh()
 		var dependency: Script = toolkit.get_script().get_script_constant_map().KC
 		var source: String = dependency.source_code
 		dependency.source_code = source + "\n# changed Toolkit dependency fixture\n"
-		damage(target(), player); reject("changed actual Toolkit dependency rejected")
+		damage(target(), player)
+		if contract_v1: ok(observer.read().value == "1", "contract-v1 does not pin unrelated dependency source")
+		else: reject("changed actual Toolkit dependency rejected")
 		dependency.source_code = source
 		fresh()
 		# A source-verified pre callback cannot mask a transient native-body dispatch.
@@ -134,6 +157,7 @@ func run(root: Node, lib: Node, hud: Node, _native_ai: Script = null) -> void:
 		broken.death_helper = func(): api._hooks["ai-death-pre"].reverse()
 		damage(broken, player); reject("pre registry mutation inside native body rejected")
 		api._hooks["ai-death-pre"] = before
+	if contract_v1: await load("res://VTKContractTests.gd").new().run(self, tree.root, api, toolkit, feed)
 	fresh()
 	var start := Time.get_ticks_usec()
 	for i in 30: damage(target(), player)

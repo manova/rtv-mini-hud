@@ -1,5 +1,27 @@
 # Validation scope
 
+## Local contract-v1 candidate, 10 November 2026
+
+Candidate 0.4.7-vtk-contract.1 adds only the VTK contract recognition path and local verification tooling. All historical sections below describe 0.4.6 unless noted. New live gameplay and external repository review remain pending; no publication, merge, or normal installation has been performed.
+
+The VTK baseline is a deterministic private build of official 5.6.4 source at `59a544adc57accd841e9e38ffd55e6e3ac202892`. GitHub exposes no release assets and the available VostokMods latest download resolves to 5.5.1, so no released 5.6.4 binary equivalence is claimed. `tools/build_vtk_fixture.py` reproduces selected upstream pack rules and verifies SHA256 `14228d1e461b6e3bc4e4b6034316849140bb5a884d8dbccee12dc3c81454e725`. The upstream document is the behavioral contract, not an attestation that arbitrary in-process modifications are safe.
+
+The independent local code review found no blocking runtime findings. Its two nonblocking fixture gaps (wrong loaded Script paths and invalid legacy feed-mode combinations) were addressed before the contract matrix. The exact candidate passed 16,654 native assertion executions in 88 fresh generation/activation phases (44 isolated profiles), serially, with no failed checks or unexpected script errors. These fixture processes use modeled damage and actual unchanged companion callbacks, never gameplay or real saves.
+
+Per Metro version (3.4.2 and 3.5.0), developer mode off/on throughout:
+
+- Legacy 5.5.1, six stacks (minimal, AIAL, Toolkit, Lava, Toolkit+Lava, Toolkit+Lava+AIAL): 4,210 assertions, 24 phases.
+- VTK v1 active feed, Toolkit / Toolkit+Lava / Toolkit+Lava+AIAL: 2,533 assertions, 12 phases.
+- VTK v1 absent feed, Toolkit+Lava: 779 assertions, four phases.
+- VTK v1 connected-but-inactive feed, Toolkit+Lava: 805 assertions, four phases.
+
+That is 8,327 assertions per loader. These counts include repeated regression executions, not unique scenarios. Contract checks cover exact-int markers, missing/unknown/non-integer markers, callback registration identity/priority/multiplicity, replace hooks, loaded Hooks/feed Script paths, node paths/back-references, extra/deferred/adapted listeners, and permanent unavailable displays after repairing invalid structure. V1 source-only changes stay compatible while legacy changes fail closed. Existing player/NPC/corpse, native-source, lifecycle, nested-dispatch, AIAL and Lava cases remain. KillObserver.gd and NativeAIContract.gd are byte-identical to baseline 8ed255f.
+
+All seven package tests passed, including an independent rerun. The reproducible VTK source fixture also matched its pinned hash on independent reconstruction. Remote CI and repository bots were not invoked because this branch remains unpublished. Live gameplay acceptance and source-build versus released-binary equivalence remain separate limits. Native fixture cleanup does not certify ordinary gameplay shutdown or resolve the known Lava-associated exit fault.
+
+Candidate archive SHA256: `0506aac70db933caabd776fe4098fee01056d2ad8379f6bf73f8791fa94f442e`. Package checks verify the checksum, deterministic entry bytes, native-body boundary, exact version guard, exclusion of VTK count import/signal subscription, and default-off tracing.
+
+
 ## Runtime regression evidence
 
 The candidate passed 3,250 assertions in 24 fresh native generation/activation phases: minimal, AIAL, Toolkit, Lava, Toolkit+Lava, and Toolkit+Lava+AIAL, each with developer mode off/on. These use modeled combat and actual unchanged companion callbacks, not gameplay. Fixture cleanup clears Engine metadata before exit; those clean exits do not establish ordinary game shutdown safety.

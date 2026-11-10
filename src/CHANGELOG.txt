@@ -1,3 +1,17 @@
+Mini HUD 0.4.7-vtk-contract.1 (local candidate)
+2026-11-10
+
+Recognizes exactly VTK OBSERVER_CONTRACT integer 1 with live structural checks.
+The native Mini HUD final-blow witness and counters remain independent of VTK.
+No VTK UI/dependency source hashes are required for contract v1. Unknown
+markers, unexpected death callbacks and signal listeners still fail closed.
+Keeps the exact-source fallback for VTK 5.5.1, Lava 1.1.2 and AIAL 1.2.0.
+
+Baseline VTK is a local build of official 5.6.4 source at 59a544a, not a
+verified released binary. Live gameplay acceptance of this candidate is pending.
+No changes to HUD appearance, shortcuts, settings, native damage or saves.
+The previously recorded Lava-associated shutdown limitation is unchanged.
+
 Mini HUD 0.4.6
 2026-11-08
 
