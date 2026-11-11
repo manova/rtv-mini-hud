@@ -34,7 +34,7 @@ The native witness sequence and all native-source/lifecycle/player/enemy checks 
 
 ## Limits
 
-This combines versioned-contract compatibility with legacy source pins, not an adversarial in-process sandbox. Arbitrary runtime code/data changes and native bypasses are not guaranteed to be detected. Unknown VTK contract versions, other Lava/AIAL versions, Total Kills/Tally, full mod stacks, general Toolkit/Lava behavior and historical Punisher encounter attribution remain outside this pass. The previous 0.4.6 gameplay/repository-bot reviews do not certify this local candidate. New live gameplay acceptance remains pending.
+This combines versioned-contract compatibility with legacy source pins, not an adversarial in-process sandbox. Arbitrary runtime code/data changes and native bypasses are not guaranteed to be detected. Unknown VTK contract versions, other Lava/AIAL versions, Total Kills/Tally, full mod stacks, general Toolkit/Lava behavior and historical Punisher encounter attribution remain outside this pass. The contract candidate completed a focused Metro 3.5.0 gameplay smoke with source-built VTK 5.6.4. Screenshot/tester evidence, unavailable traces and the later callback-arity hardening are detailed in [VALIDATION.md](VALIDATION.md). This does not add live Metro 3.4.2 or released-VTK-binary coverage.
 
 ## Metro 3.5.0 compatibility
 
