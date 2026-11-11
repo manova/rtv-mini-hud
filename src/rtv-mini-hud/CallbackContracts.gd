@@ -136,9 +136,9 @@ static func _toolkit_surface(owner: Node, lib: Object) -> bool:
 	var registry = lib.get("_hooks")
 	if not registry is Dictionary: return false
 	var methods := {
-		"ai-weapondamage-pre":"_on_ai_weapon_damage",
-		"ai-explosiondamage-pre":"_on_ai_explosion",
-		"ai-death-pre":"_on_ai_death"
+		"ai-weapondamage-pre":["_on_ai_weapon_damage", 4],
+		"ai-explosiondamage-pre":["_on_ai_explosion", 2],
+		"ai-death-pre":["_on_ai_death", 2]
 	}
 	for channel in methods:
 		var rows = registry.get(channel, [])
@@ -148,7 +148,9 @@ static func _toolkit_surface(owner: Node, lib: Object) -> bool:
 			if not row is Dictionary or not row.get("callback") is Callable: return false
 			var cb: Callable = row.callback
 			if cb.get_object() != owner: continue
-			if row.get("priority") != 100 or cb != Callable(owner, methods[channel]): return false
+			if not cb.is_valid() or row.get("priority") != 100 or cb != Callable(owner, methods[channel][0]): return false
+			# Metro advances its sequence even when callv rejects a wrong arity.
+			if cb.get_argument_count() != methods[channel][1]: return false
 			found += 1
 		if found != 1: return false
 	for channel in ["ai-weapondamage", "ai-explosiondamage", "ai-death"]:

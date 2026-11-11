@@ -24,6 +24,8 @@ The agreement is [OBSERVER_CONTRACT.md at 59a544a](https://github.com/dgtball/rt
 
 The live VTKHooks node and Script path, `_on_ai_death` Callable, priority 100 and `_lib` identity are checked at every witness. Each of the three agreed damage/death pre registrations must be present exactly once on that owner, with the expected standard method and priority. Replace hooks remain unsupported. Unknown Death callbacks cannot consume VTK's sequence allowance.
 
+The three standard observation Callables must be valid and expose the agreed 4/2/2 argument counts. Wrong arities cannot receive an allowance merely because Metro advances its dispatch sequence.
+
 Zero kill_event listeners is valid when VTK HUD has never been enabled. Otherwise the only permitted listener is the standard `_on_kill_event` method on `VTKKC_Canvas/VTKFeed`, with the agreed Script path, flags 0 and `_hooks` back-reference. An existing disabled feed remains valid. The listener snapshot must stay unchanged through the event. The explicit named feed baseline is 5.6.4; unnamed 5.6.3 feed nodes are not claimed here.
 
 Contract v1 deliberately does not hash VTK UI, callback or dependency source. The version marker is VTK's behavioral promise for its complete synchronous observation path; it is not proof that arbitrary scripts are harmless. Reading structural properties can execute getters. Mini HUD adds no signal listener, invokes no VTK attribution method and reads no VTK kill count/payload. Consequently payload validation is not an attribution gate: Mini HUD never consumes that payload.

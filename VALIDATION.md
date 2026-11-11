@@ -1,10 +1,34 @@
 # Validation scope
 
-## Local contract-v1 candidate, 10 November 2026
+## Prepared 0.4.7 release, 11 November 2026
 
-Candidate 0.4.7-vtk-contract.1 adds only the VTK contract recognition path and local verification tooling. All historical sections below describe 0.4.6 unless noted. New live gameplay and external repository review remain pending; no publication, merge, or normal installation has been performed.
+The manually played `0.4.7-vtk-contract.1` candidate is the gameplay baseline. Fresh review identified a nonblocking callback-validity/arity gap: a marker-v1 script with changed parameter counts could pass structural recognition while its VTK callback silently did nothing. The prepared package adds a v1-only guard for valid standard callbacks with the agreed 4/2/2 argument counts and negative fixtures. This does not change the independent native final-blow witness. All other runtime scripts, icons and licenses retain the played candidate bytes; version metadata and changelog are updated. The final guard is covered by native regression below, not a claim of another human gameplay pass. Release preparation is not publication or permission to merge.
 
-The VTK baseline is a deterministic private build of official 5.6.4 source at `59a544adc57accd841e9e38ffd55e6e3ac202892`. GitHub exposes no release assets and the available VostokMods latest download resolves to 5.5.1, so no released 5.6.4 binary equivalence is claimed. `tools/build_vtk_fixture.py` reproduces selected upstream pack rules and verifies SHA256 `14228d1e461b6e3bc4e4b6034316849140bb5a884d8dbccee12dc3c81454e725`. The upstream document is the behavioral contract, not an attestation that arbitrary in-process modifications are safe.
+Prepared archive SHA256: `b3be4ab5d0986ad06d4cada024d1e358c274d9bbb740b3c8e249cae3ed3cb15e`. A fresh full native matrix and independent review are in progress; final outcomes are recorded below when complete. Remote package CI and bot review remain pending.
+
+The first release-matrix attempt completed 18 phases and 2,987 assertions, then a headless generation process terminated before fixture execution (`ntdll.dll`, `0xc0000409`, offset `0x5a114`). Its output contains only the engine banner. This failed startup is retained and excluded from passing totals. It is distinct from the prior NVIDIA startup failure and the Lava-associated gameplay exit signature; its cause remains unresolved.
+
+### Focused gameplay acceptance
+
+Two isolated user-run processes used the exact candidate, pinned VTK 5.6.4 source build, Metro 3.5.0, MCM 2.9.3 and Lava Lamps 1.1.2. Both capture manifests verified without mismatches (65 and 69 entries), and mounted archives matched their pinned identities. Both logs confirm native observer installation.
+
+- Active HUD: screenshots show Village Mini HUD count 0 then 1, with VTK's player-to-bandit event visible at 1. The tester observed an NPC kill excluded from Mini HUD, then a player kill counted once.
+- Same-process HUD disabled: the tester turned off all three VTK HUD features. Screenshots show Highway count reset to 0 while the VTK counter was still visible, then Mini HUD at 1 with VTK visuals hidden. They do not establish whether the reset occurred before or after disabling the settings.
+- Fresh process with all three features off: screenshots show Village count 0 then 1 without VTK visuals. Saved VTK configurations confirm all three settings false; the second log records a death and reload. The tester reported player kills working after that reload.
+
+These passes support focused observable compatibility in all three configured HUD states. No trace-level attribution records were captured: the preparation helper's encoding defect stranded a true trace entry outside the valid Bool section, whose effective trace value was false. MCM consequently emitted unsupported-section warnings. This test-kit defect does not invalidate screenshots or the tester's observations, but exact final-shot causality, NPC exclusion and ordering remain tester-observed rather than trace-proven. Actual feed-node absence is verified structurally offline, not established merely by hidden visuals. Corpse-shot repetition, live Metro 3.4.2 and additional ordering combinations are not claimed as new manual coverage.
+
+### Shutdown and publication limits
+
+Both processes generated Windows `ntdll.dll` / `0xc0000005` crashes at exit with the same offset as the previously isolated Lava-associated fault. Shader/resource cleanup errors were recorded by the tester, not retained in the Godot logs. The new logs end at complete lines, unlike the earlier 4-KiB-boundary examples below. This is consistent with the known shutdown issue; changed Windows and VTK versions mean it is not fresh isolation of its exact cause. No shutdown fix or crash-free stack claim is made.
+
+VTK 5.6.4 remains a reproducible source fixture, not a verified official release archive. Future VTK releases can remain compatible with integer contract v1 and the agreed behavior/structure; this is not a guarantee for unknown builds. Private captures, profiles, local input paths, game files and companion archives are not included in the public repository or package.
+
+## Initial local contract-v1 candidate, 10 November 2026
+
+Candidate 0.4.7-vtk-contract.1 adds only the VTK contract recognition path and local verification tooling. All historical sections below describe 0.4.6 unless noted. At that checkpoint, new live gameplay and external repository review remained pending; no publication, merge, or normal installation had been performed. See the newer preparation and gameplay evidence above.
+
+The VTK baseline is a deterministic private build of official 5.6.4 source at `59a544adc57accd841e9e38ffd55e6e3ac202892`. On 10 November, GitHub exposed no release assets and the available VostokMods latest download resolved to 5.5.1, so no released 5.6.4 binary equivalence is claimed. `tools/build_vtk_fixture.py` reproduces selected upstream pack rules and verifies SHA256 `14228d1e461b6e3bc4e4b6034316849140bb5a884d8dbccee12dc3c81454e725`. The upstream document is the behavioral contract, not an attestation that arbitrary in-process modifications are safe.
 
 The independent local code review found no blocking runtime findings. Its two nonblocking fixture gaps (wrong loaded Script paths and invalid legacy feed-mode combinations) were addressed before the contract matrix. The exact candidate passed 16,654 native assertion executions in 88 fresh generation/activation phases (44 isolated profiles), serially, with no failed checks or unexpected script errors. These fixture processes use modeled damage and actual unchanged companion callbacks, never gameplay or real saves.
 
