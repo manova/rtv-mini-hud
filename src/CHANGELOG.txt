@@ -1,3 +1,31 @@
+Mini HUD 0.4.7
+2026-11-11
+
+Recognizes exactly VTK OBSERVER_CONTRACT integer 1 with live structural checks.
+The native Mini HUD final-blow witness and counters remain independent of VTK.
+No VTK UI/dependency source hashes are required for contract v1. Unrelated VTK
+changes can stay compatible while its agreed contract and live structure remain
+intact. Unknown markers, death callbacks and signal listeners fail closed.
+Keeps exact-source VTK 5.5.1, Lava 1.1.2 and AIAL 1.2.0 compatibility, with the
+reviewed Metro 3.4.2 and 3.5.0 loader/wrapper families.
+
+Baseline VTK is a local build of official 5.6.4 source at 59a544a, not a
+verified released binary. Focused Metro 3.5.0 gameplay confirmed numeric player
+kill counts with VTK HUD active, disabled mid-session and off before a fresh
+launch; the tester also observed NPC-kill exclusion. Screenshots corroborate
+counts and visible HUD states. Diagnostic traces were unavailable because of a
+separate test-profile encoding defect; this is not trace-level attribution proof.
+Both loader versions passed the contract and legacy modeled-combat matrix.
+
+After the gameplay smoke, one v1-only guard was tightened to require valid
+callbacks with the agreed 4/2/2 argument counts; negative fixtures cover this
+change. The independent native witness, other runtime scripts, icons and
+licenses remain unchanged. Final package verification uses the prepared build.
+No changes to HUD appearance, shortcuts, settings, native damage or saves.
+The previously recorded Lava-associated shutdown limitation remains: both new
+gameplay exits matched the known crash signature. This release does not fix it
+or certify arbitrary future VTK/game/loader versions or all companion features.
+
 Mini HUD 0.4.6
 2026-11-08
 

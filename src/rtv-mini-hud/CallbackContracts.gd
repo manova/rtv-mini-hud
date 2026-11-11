@@ -1,7 +1,8 @@
 extends RefCounted
-# Reviewed synchronous bookkeeping only. This is compatibility validation, not
-# a sandbox against arbitrary in-process code modification. No foreign method
-# is invoked to establish trust, and no other mod's kill totals are imported.
+# Versioned VTK observation surface and legacy source-pinned bookkeeping.
+# This is compatibility validation, not
+# a sandbox against arbitrary in-process code modification. No VTK attribution method
+# is called to establish a kill, and no other mod's kill totals are imported.
 const SOURCES := {
   "res://mods/VTK/VTKConfig.gd": "97c0276de32c2794ec9598051a0b98b91935fb9f8f065b384fafb28277df599e",
   "res://mods/VTK/VTKData.gd": "2cedddbbd4d05661c944f31463d283761348db067db54ae53897750677ab6d08",
@@ -110,13 +111,56 @@ static func _inner_dependencies(script: Script, seen: Dictionary) -> bool:
 		if value is Script and not _script(value, seen): return false
 	return true
 
-static func _owner(owner, root: Node, path: String, source: String) -> bool:
+# Node and loaded Script identity remain live checks in both trust modes.
+static func _owner_shape(owner, root: Node, path: String, source: String) -> bool:
 	if not owner is Node or not is_instance_valid(owner) or root == null: return false
 	if root.get_node_or_null(NodePath(path)) != owner or owner.is_queued_for_deletion(): return false
 	var script: Script = owner.get_script()
-	return script != null and script.resource_path == source and _script(script, {})
+	return script != null and script.resource_path == source
+
+static func _owner(owner, root: Node, path: String, source: String) -> bool:
+	return _owner_shape(owner, root, path, source) and _script(owner.get_script(), {})
+
+# Missing marker means legacy only. An explicit unknown marker never falls back.
+# The contract is an interoperability promise, not proof of arbitrary code safety.
+static func toolkit_mode(owner: Node) -> String:
+	var script: Script = owner.get_script()
+	if script == null: return ""
+	var constants := script.get_script_constant_map()
+	if constants.has("OBSERVER_CONTRACT"):
+		var version = constants.OBSERVER_CONTRACT
+		return "contract-v1" if typeof(version) == TYPE_INT and version == 1 else ""
+	return "legacy-5.5.1" if _script(script, {}) else ""
+
+static func _toolkit_surface(owner: Node, lib: Object) -> bool:
+	var registry = lib.get("_hooks")
+	if not registry is Dictionary: return false
+	var methods := {
+		"ai-weapondamage-pre":["_on_ai_weapon_damage", 4],
+		"ai-explosiondamage-pre":["_on_ai_explosion", 2],
+		"ai-death-pre":["_on_ai_death", 2]
+	}
+	for channel in methods:
+		var rows = registry.get(channel, [])
+		if not rows is Array: return false
+		var found := 0
+		for row in rows:
+			if not row is Dictionary or not row.get("callback") is Callable: return false
+			var cb: Callable = row.callback
+			if cb.get_object() != owner: continue
+			if not cb.is_valid() or row.get("priority") != 100 or cb != Callable(owner, methods[channel][0]): return false
+			# Metro advances its sequence even when callv rejects a wrong arity.
+			if cb.get_argument_count() != methods[channel][1]: return false
+			found += 1
+		if found != 1: return false
+	for channel in ["ai-weapondamage", "ai-explosiondamage", "ai-death"]:
+		var rows = registry.get(channel, [])
+		if not rows is Array or not rows.is_empty(): return false
+	return owner.has_signal("kill_event")
 
 static func toolkit_connections(owner: Node, root: Node) -> Variant:
+	var mode := toolkit_mode(owner)
+	if mode.is_empty() or not owner.has_signal("kill_event"): return null
 	var rows := owner.get_signal_connection_list("kill_event")
 	if rows.size() > 1: return null
 	var copied := []
@@ -124,7 +168,8 @@ static func toolkit_connections(owner: Node, root: Node) -> Variant:
 		var cb: Callable = row.callable
 		if row.flags != 0 or not cb.is_valid(): return null
 		var feed = cb.get_object()
-		if not _owner(feed, root, "VTKKC_Canvas/VTKFeed", "res://mods/VTK/VTKFeed.gd"): return null
+		if not _owner_shape(feed, root, "VTKKC_Canvas/VTKFeed", "res://mods/VTK/VTKFeed.gd"): return null
+		if mode == "legacy-5.5.1" and not _script(feed.get_script(), {}): return null
 		if cb != Callable(feed, "_on_kill_event") or feed.get("_hooks") != owner: return null
 		copied.append({"callable":cb,"flags":row.flags})
 	return copied
@@ -134,13 +179,17 @@ static func identify(row: Dictionary, channel: String, root: Node, lib: Object) 
 	if row.priority != 100 or not cb.is_valid(): return ""
 	var owner = cb.get_object()
 	if channel == "ai-death-pre":
-		if not _owner(owner, root, "VTKUI/VTKHooks", "res://mods/VTK/VTKHooks.gd"): return ""
+		if not _owner_shape(owner, root, "VTKUI/VTKHooks", "res://mods/VTK/VTKHooks.gd"): return ""
 		if cb != Callable(owner, "_on_ai_death") or owner.get("_lib") != lib: return ""
-		# The verified feed can dynamically call the VTKUI icon helper.
-		var ui := root.get_node_or_null("VTKUI")
-		if not _owner(ui, root, "VTKUI", "res://mods/VTK/VTKUI.gd"): return ""
+		var mode := toolkit_mode(owner)
+		if mode.is_empty(): return ""
+		if mode == "legacy-5.5.1":
+			# Legacy feed dynamically calls this helper; retain its exact source gate.
+			var ui := root.get_node_or_null("VTKUI")
+			if not _owner(ui, root, "VTKUI", "res://mods/VTK/VTKUI.gd"): return ""
+		elif not _toolkit_surface(owner, lib): return ""
 		if toolkit_connections(owner, root) == null: return ""
-		return "VostokToolkit._on_ai_death@5.5.1"
+		return "VostokToolkit._on_ai_death@5.5.1" if mode == "legacy-5.5.1" else "VostokToolkit._on_ai_death@contract-v1"
 	if channel != "ai-death-post": return ""
 	if _owner(owner, root, "MurdieLavaLamps", "res://MurdieLavaLamps/Main.gd"):
 		if cb == Callable(owner, "_ai_died") and owner.get("_lib") == lib:

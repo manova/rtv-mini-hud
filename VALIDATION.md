@@ -1,5 +1,66 @@
 # Validation scope
 
+## Prepared 0.4.7 release, 11 November 2026
+
+The manually played `0.4.7-vtk-contract.1` candidate is the gameplay baseline. Fresh review identified a nonblocking callback-validity/arity gap: a marker-v1 script with changed parameter counts could pass structural recognition while its VTK callback silently did nothing. The prepared package adds a v1-only guard for valid standard callbacks with the agreed 4/2/2 argument counts and negative fixtures. This does not change the independent native final-blow witness. All other runtime scripts, icons and licenses retain the played candidate bytes; version metadata and changelog are updated. The exact final archive subsequently completed the light human gameplay smoke described below; the guard also remains covered by native regression. Release preparation is not publication or permission to merge.
+
+Prepared archive SHA256: `b3be4ab5d0986ad06d4cada024d1e358c274d9bbb740b3c8e249cae3ed3cb15e`. The fresh complete serial rerun passed **17,434 native assertion executions in 88 generation/activation phases across 44 isolated profiles**. Every phase returned exit 0, fresh passing results, and no unexpected script errors. The exact prepared archive was used in all eight matrix invocations. Seven package tests passed, and a rebuild from committed Git bytes reproduced the archive exactly. Public CI and bot-review status are tracked on [PR #2](https://github.com/manova/rtv-mini-hud/pull/2); the native results remain local because their inputs are private.
+
+Per loader (Metro 3.4.2 and 3.5.0), developer mode off/on: legacy six-stack matrix 4,210 assertions; v1 active Toolkit/combined/AIAL-combined 2,767; v1 absent combined 857; v1 inactive combined 883. That is 8,717 per loader. Counts include repeated executions, not unique scenarios. The 39 added callback-shape assertions run in each of 20 v1 profiles. KillObserver.gd and NativeAIContract.gd remain byte-identical to baseline 8ed255f. These are modeled-combat fixtures with explicit cleanup, not live combat or ordinary shutdown certification.
+
+The first release-matrix attempt completed 18 phases and 2,987 assertions, then a headless generation process terminated before fixture execution (`ntdll.dll`, `0xc0000409`, offset `0x5a114`). Its output contains only the engine banner. This failed startup is retained and excluded from passing totals. It is distinct from the prior NVIDIA startup failure and the Lava-associated gameplay exit signature; its cause remains unresolved.
+
+### Earlier candidate gameplay acceptance
+
+Two isolated user-run processes used the exact candidate, pinned VTK 5.6.4 source build, Metro 3.5.0, MCM 2.9.3 and Lava Lamps 1.1.2. Both capture manifests verified without mismatches (65 and 69 entries), and mounted archives matched their pinned identities. Both logs confirm native observer installation.
+
+- Active HUD: screenshots show Village Mini HUD count 0 then 1, with VTK's player-to-bandit event visible at 1. The tester observed an NPC kill excluded from Mini HUD, then a player kill counted once.
+- Same-process HUD disabled: the tester turned off all three VTK HUD features. Screenshots show Highway count reset to 0 while the VTK counter was still visible, then Mini HUD at 1 with VTK visuals hidden. They do not establish whether the reset occurred before or after disabling the settings.
+- Fresh process with all three features off: screenshots show Village count 0 then 1 without VTK visuals. Saved VTK configurations confirm all three settings false; the second log records a death and reload. The tester reported player kills working after that reload.
+
+These passes support focused observable compatibility in all three configured HUD states. No trace-level attribution records were captured: the preparation helper's encoding defect stranded a true trace entry outside the valid Bool section, whose effective trace value was false. MCM consequently emitted unsupported-section warnings. This test-kit defect does not invalidate screenshots or the tester's observations, but exact final-shot causality, NPC exclusion and ordering remain tester-observed rather than trace-proven. Actual feed-node absence is verified structurally offline, not established merely by hidden visuals. Those two earlier passes do not establish corpse-shot repetition, live Metro 3.4.2 or additional ordering combinations.
+
+The isolated test-kit instrumentation was repaired after preserving all retained captures: the malformed section was removed, the effective trace setting and F9 were verified, and the helper now reads/writes explicit BOM-free UTF-8. A separate disposable native fixture emitted actual trace records with clean exit; this was not a new gameplay run. Normal installed files, normal-profile files and VTK settings were unchanged.
+
+### Final 0.4.7 light gameplay smoke
+
+A third isolated user-run process used the exact final 0.4.7 archive (SHA256 above), including the callback-validity/arity safeguard, with the same Metro 3.5.0, source-built VTK 5.6.4, MCM 2.9.3 and Lava Lamps 1.1.2 stack. The capture manifest verified all 68 entries without mismatches, including six screenshots. The mounted Mini HUD and VTK archives matched their pinned hashes. The log confirms native observer installation. Settings screenshots and captured configuration confirm diagnostic tracing on, VTK kill feed on, and VTK counter/streak off.
+
+- Screenshots show Village Mini HUD count 0, then 1 beside VTK's Player-to-Bandit event, then still 1 beside an NPC-to-Bandit event, and finally still 1.
+- The tester reports that shooting the killed bandit's corpse left the count at 1 and that two Nomad-attributed kills were excluded. The screenshots independently corroborate one NPC event with an unchanged count; the corpse-shot action and second NPC kill are tester observations, not recorded action sequences.
+- Tracing was actually enabled: 11 startup/load/scope records survive. The gameplay log stops at 8,192 bytes on a complete line before combat, with no retained kill-attribution or quit records. Original and captured logs match. This is incomplete trace evidence, not a repeat of the earlier disabled-tracing configuration defect. No script errors appear in the retained portion; it cannot establish an error-free full session.
+- Capture completed before the tester filled in observations. Its observations copy is the blank template; the completed working observations were read separately. Neither the capture nor its manifest was rewritten.
+
+This closes the intended final-package activation/counting smoke gate, supported by screenshots and tester observations rather than combat traces. It does not repeat the earlier active-to-inactive/fresh-inactive matrix or add live Metro 3.4.2, exact callback-ordering, released-VTK-binary, or crash-free shutdown coverage. Runtime and package bytes are unchanged by this evidence update.
+
+### Shutdown and publication limits
+
+All three user-run processes generated Windows `ntdll.dll` / `0xc0000005` crashes at exit, offset `0x1ceed`, matching the previously isolated Lava-associated signature. The final smoke has a matching Application Error and WER report for its isolated executable. Shader/resource cleanup errors were recorded by the tester, not retained in the Godot logs. These logs end at complete lines, including the final smoke at 8,192 bytes. This is consistent with the known shutdown issue; changed Windows and VTK versions mean it is not fresh isolation of its exact cause. No shutdown fix or crash-free stack claim is made.
+
+VTK 5.6.4 remains a reproducible source fixture, not a verified official release archive. Future VTK releases can remain compatible with integer contract v1 and the agreed behavior/structure; this is not a guarantee for unknown builds. Private captures, profiles, local input paths, game files and companion archives are not included in the public repository or package.
+
+## Initial local contract-v1 candidate, 10 November 2026
+
+Candidate 0.4.7-vtk-contract.1 adds only the VTK contract recognition path and local verification tooling. All historical sections below describe 0.4.6 unless noted. At that checkpoint, new live gameplay and external repository review remained pending; no publication, merge, or normal installation had been performed. See the newer preparation and gameplay evidence above.
+
+The VTK baseline is a deterministic private build of official 5.6.4 source at `59a544adc57accd841e9e38ffd55e6e3ac202892`. On 10 November, GitHub exposed no release assets and the available VostokMods latest download resolved to 5.5.1, so no released 5.6.4 binary equivalence is claimed. `tools/build_vtk_fixture.py` reproduces selected upstream pack rules and verifies SHA256 `14228d1e461b6e3bc4e4b6034316849140bb5a884d8dbccee12dc3c81454e725`. The upstream document is the behavioral contract, not an attestation that arbitrary in-process modifications are safe.
+
+The independent local code review found no blocking runtime findings. Its two nonblocking fixture gaps (wrong loaded Script paths and invalid legacy feed-mode combinations) were addressed before the contract matrix. The exact candidate passed 16,654 native assertion executions in 88 fresh generation/activation phases (44 isolated profiles), serially, with no failed checks or unexpected script errors. These fixture processes use modeled damage and actual unchanged companion callbacks, never gameplay or real saves.
+
+Per Metro version (3.4.2 and 3.5.0), developer mode off/on throughout:
+
+- Legacy 5.5.1, six stacks (minimal, AIAL, Toolkit, Lava, Toolkit+Lava, Toolkit+Lava+AIAL): 4,210 assertions, 24 phases.
+- VTK v1 active feed, Toolkit / Toolkit+Lava / Toolkit+Lava+AIAL: 2,533 assertions, 12 phases.
+- VTK v1 absent feed, Toolkit+Lava: 779 assertions, four phases.
+- VTK v1 connected-but-inactive feed, Toolkit+Lava: 805 assertions, four phases.
+
+That is 8,327 assertions per loader. These counts include repeated regression executions, not unique scenarios. Contract checks cover exact-int markers, missing/unknown/non-integer markers, callback registration identity/priority/multiplicity, replace hooks, loaded Hooks/feed Script paths, node paths/back-references, extra/deferred/adapted listeners, and permanent unavailable displays after repairing invalid structure. V1 source-only changes stay compatible while legacy changes fail closed. Existing player/NPC/corpse, native-source, lifecycle, nested-dispatch, AIAL and Lava cases remain. KillObserver.gd and NativeAIContract.gd are byte-identical to baseline 8ed255f.
+
+All seven package tests passed, including an independent rerun. The reproducible VTK source fixture also matched its pinned hash on independent reconstruction. At this initial checkpoint, remote CI and repository bots had not been invoked because the branch was unpublished, and live gameplay acceptance was still pending. The later results are recorded above and on PR #2. Source-build versus released-binary equivalence remains a separate limit. Native fixture cleanup does not certify ordinary gameplay shutdown or resolve the known Lava-associated exit fault.
+
+Candidate archive SHA256: `0506aac70db933caabd776fe4098fee01056d2ad8379f6bf73f8791fa94f442e`. Package checks verify the checksum, deterministic entry bytes, native-body boundary, exact version guard, exclusion of VTK count import/signal subscription, and default-off tracing.
+
+
 ## Runtime regression evidence
 
 The candidate passed 3,250 assertions in 24 fresh native generation/activation phases: minimal, AIAL, Toolkit, Lava, Toolkit+Lava, and Toolkit+Lava+AIAL, each with developer mode off/on. These use modeled combat and actual unchanged companion callbacks, not gameplay. Fixture cleanup clears Engine metadata before exit; those clean exits do not establish ordinary game shutdown safety.
