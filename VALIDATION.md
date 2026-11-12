@@ -16,7 +16,7 @@ Diagnostic tracing was deliberately off in both sessions. The first gameplay log
 
 The tester observed no quit error. Windows nevertheless recorded Application Error events for this isolated executable at 05:11:09 and 05:16:32 UTC: `ntdll.dll`, `0xc0000005`, offset `0x1ceed`. Both match the previously isolated Lava-associated exit signature. This is not a new isolation of its cause and does not establish that Mini HUD caused it. The existing shutdown limitation remains; no fix or crash-free stack claim is made.
 
-The focused 0.4.8 gameplay acceptance gate is complete. No further user retest is required for the unchanged candidate within this scope. Remote review/CI, merge and publication remain pending authorization. This pass adds no AI-detector compatibility claim, released-VTK-binary validation, new live Metro 3.4.2 coverage or full-mod-stack certification.
+The focused 0.4.8 gameplay acceptance gate is complete. No further user retest is required for the unchanged candidate within this scope. Draft pull-request preparation and public CI are authorized; merge and publication remain gated on separate authorization. This pass adds no AI-detector compatibility claim, released-VTK-binary validation, new live Metro 3.4.2 coverage or full-mod-stack certification.
 
 ## Prepared 0.4.8 optional-cell candidate, 12 November 2026
 
@@ -32,7 +32,7 @@ Prepared archive SHA256: `fce79feabd62211a2d256d19f438c75f64f6ddcb4a17c6ec5aa55b
 
 This focused pass does not repeat the full 0.4.7 44-profile compatibility matrix, add new Metro 3.4.2 gameplay, validate an AI detector, or certify other versions/mod stacks. The unchanged 0.4.7 compatibility evidence below remains historical evidence. The existing Lava-associated exit limitation is not fixed. VTK remains the pinned 5.6.4 source fixture, not an independently validated official binary.
 
-**At initial preparation, pending:** the user's in-game MCM/equipment/hidden-count/persistence acceptance test, any authorized remote review/CI, and publication. The newer gameplay acceptance section above supersedes that manual-test status. No push, PR, merge, publication or normal installation update was performed for this candidate. Production diagnostics remain off; the isolated UI gameplay kit also leaves trace off and relies on observed counts/screenshots for that manual step.
+**At initial preparation, pending:** the user's in-game MCM/equipment/hidden-count/persistence acceptance test, any authorized remote review/CI, and publication. The newer gameplay acceptance section above supersedes that manual-test status. At that initial local checkpoint, no push, PR, merge, publication or normal installation update had been performed for this candidate. Production diagnostics remain off; the isolated UI gameplay kit also leaves trace off and relies on observed counts/screenshots for that manual step.
 
 The first isolated UI harness attempts failed because the game executable does not support `--path` and because of fixture-only script naming/preload errors. They produced no passing assertions and are excluded. The corrected runner uses an adjacent pack, checks fresh results/error output, and is the passing run described above. These were harness issues, not repaired production defects.
 

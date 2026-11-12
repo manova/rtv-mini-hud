@@ -7,4 +7,4 @@
 
 The focused in-game checks passed, including all four layouts, hidden-count continuity and saved preferences after relaunch. The previously documented Lava-associated shutdown issue remains outside this update.
 
-Publication status: local draft only. No upload, push, merge or release has been performed for 0.4.8.
+Publication status: unreleased draft for pull-request review. Merge, release upload and normal-installation updates require separate authorization.

@@ -8,7 +8,7 @@ The Time-slot clock remains the foundation. MCM now has independent **Show trade
 
 These are presentation options: kill tracking, attribution safeguards and reset rules continue while the counter is hidden. Hiding the trader timer does not modify native timers. This is not a way to disable kill-observer hooks or bypass compatibility checks. Source changes are confined to Settings and Panel, plus release metadata. The 0.4.7 compatibility information below remains applicable.
 
-This is a local release candidate. Focused automated validation is recorded in [VALIDATION.md](VALIDATION.md). The focused in-game acceptance test is complete, including hidden-count continuity and preference persistence after relaunch. External review/public CI and publication remain pending. The existing Lava-associated shutdown caveat remains; see the evidence limits in VALIDATION.md. No game, loader, companion mods, profile or test artifacts are distributed in the VMZ.
+This is an unreleased 0.4.8 candidate prepared for draft pull-request review. Focused automated validation is recorded in [VALIDATION.md](VALIDATION.md). The focused in-game acceptance test is complete, including hidden-count continuity and preference persistence after relaunch. Public CI and review results are tracked in the pull request; merge and publication require separate authorization. The existing Lava-associated shutdown caveat remains; see the evidence limits in VALIDATION.md. No game, loader, companion mods, profile or test artifacts are distributed in the VMZ.
 
 ## Compatibility baseline
 
