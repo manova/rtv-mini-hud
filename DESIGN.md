@@ -4,7 +4,7 @@
 
 Panel retains stable clock/trader/kill indices. It hides whole optional VBox cells and recalculates the shared backdrop from visible cells plus actual minimum size. This removes blank gaps and allows long/multiline hidden trader content to relinquish width and height. Hiding does not unload readers, reset counters, unregister callbacks or change any attribution/compatibility decision. Main, Model and all readers/observers/contracts are unchanged from released 0.4.7.
 
-The focused tests cover migration, repeated settings changes, all four combinations, pre-ready configuration, long/multiline content, positioning, scaling, tint, mouse transparency, display modes and suppression. Native modeled-combat fixtures additionally apply all four combinations through Main and verify the same observer/hooks/count, then player counting and NPC/corpse exclusion. User gameplay acceptance remains a separate gate.
+The focused tests cover migration, repeated settings changes, all four combinations, pre-ready configuration, long/multiline content, positioning, scaling, tint, mouse transparency, display modes and suppression. Native modeled-combat fixtures additionally apply all four combinations through Main and verify the same observer/hooks/count, then player counting and NPC/corpse exclusion. The focused user gameplay acceptance gate is complete; see VALIDATION.md for the screenshot/tester evidence and unchanged shutdown limitation.
 
 # Focused compatibility design
 
