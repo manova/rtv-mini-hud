@@ -51,6 +51,33 @@ func run(root: Node, lib: Node, hud: Node, native_ai: Script) -> void:
     var rejected=Observer.new();rejected.sync_state(Data.new());rejected.install(host,api)
     ok(rejected._script==native_ai and rejected._valid,"production uses real native resource only")
     rejected.uninstall()
+    # Run real Main.apply_config against the modeled native observer while hidden.
+    fresh()
+    var production_observer = hud._kills
+    hud._kills = observer
+    var settings = load("res://rtv-mini-hud/Settings.gd")
+    var config = settings.defaults()
+    var expected_count = 0
+    var original_hooks = observer._hooks.duplicate()
+    for combo in [[false,false], [false,true], [true,false], [true,true]]:
+        for key in ["show_trader_timer", "show_kill_counter"]:
+            var entry = config.get_value("Bool", key)
+            entry.value = combo[0] if key == "show_trader_timer" else combo[1]
+            config.set_value("Bool", key, entry)
+        hud.apply_config(config)
+        ok(observer == hud._kills and observer._hooks == original_hooks and observer.read().value == str(expected_count), "display settings preserve observer, hooks and count " + str(combo))
+        var victim = target()
+        damage(victim, player)
+        expected_count += 1
+        ok(observer.read().value == str(expected_count), "player kill tracked with optional cells " + str(combo))
+        damage(victim, player)
+        damage(target(), npc)
+        ok(observer.read().value == str(expected_count), "corpse and NPC exclusions retained with optional cells " + str(combo))
+        hud._panel.present([{"value":"12:34","icon":"sun"}, {"value":"09:42","icon":"user"}, observer.read()])
+        ok(hud._panel.values[2].text == str(expected_count) and hud._panel._cells[1].visible == combo[0] and hud._panel._cells[2].visible == combo[1], "latest count and independent visibility delivered " + str(combo))
+    hud._kills = production_observer
+    hud.apply_config(settings.defaults())
+    hud._panel.clear()
     # Focused first-death matrix, each case starts with a fresh numeric observer.
     for trace_enabled in [false,true]:
         for actor_kind in ["player","AI"]:

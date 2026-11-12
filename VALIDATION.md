@@ -1,5 +1,23 @@
 # Validation scope
 
+## Prepared 0.4.8 optional-cell candidate, 12 November 2026
+
+The candidate is based on released 0.4.7 at `f8815914569d74d9609837f4db4795eee6d2c4ae`. Runtime changes are limited to `Settings.gd` and `Panel.gd`. Main, Model, all readers, observer/contracts, diagnostic tracing, icons and licenses retain the exact baseline bytes. Release metadata/changelog are updated. Hiding either optional cell only affects presentation; hidden kill tracking is explicitly tested below.
+
+Prepared archive SHA256: `fce79feabd62211a2d256d19f438c75f64f6ddcb4a17c6ec5aa55ba97ffee0f2`.
+
+- **8 package tests passed**, including deterministic exact archive entry bytes, checksum, default-off tracing, attribution boundaries, contract scope, and separation of display flags from tracking code.
+- **286 headless Godot UI assertions passed** using exact production settings/panel/model scripts on engine 4.6.3. This covers migration/defaults, saved false settings, invalid values, all four combinations, repeated live configuration, pre-ready configuration, stable data indices, full shrink after hiding long/multiline trader content, scale/position bounds, reserved permadeath space, tint, mouse/focus passthrough, display modes and suppression. This isolated fixture uses the engine fallback font, not game assets.
+- **1,526 native assertion executions passed** on the exact prepared archive, in eight fresh generation/activation phases across minimal and VTK-v1/Lava stacks, Metro 3.5.0, developer mode off/on. All exits were zero, results fresh, and no unexpected script errors were found. New assertions apply every optional-cell combination through Main, keep observer/hook identity and counts, count player kills while hidden, reject NPC/corpse credit, and reveal the current count without resetting. These are modeled damage fixtures, not gameplay. Earlier exploratory regression passed 1,458 assertions before adding this explicit integration coverage; that run is not added to the final count.
+- **Independent static review found no blocking runtime issue.** A separate hidden renderer mounted the licensed game assets for native Lora font rendering, without starting gameplay. All four layouts were visually inspected for spacing, compactness, clipping and missing-cell gaps.
+- The isolated gameplay kit passed launcher/build/hash/path checks and a headless native profile-routing probe. Its capture helper was exercised and all 16 preparation-capture entries rehashed. Prior kit, earlier VTK kit, normal installation and normal profile were hash-preserved. Preparation capture is not gameplay evidence.
+
+This focused pass does not repeat the full 0.4.7 44-profile compatibility matrix, add new Metro 3.4.2 gameplay, validate an AI detector, or certify other versions/mod stacks. The unchanged 0.4.7 compatibility evidence below remains historical evidence. The existing Lava-associated exit limitation is not fixed. VTK remains the pinned 5.6.4 source fixture, not an independently validated official binary.
+
+**Still pending:** the user's in-game MCM/equipment/hidden-count/persistence acceptance test, any authorized remote review/CI, and publication. No push, PR, merge, publication or normal installation update was performed for this candidate. Production diagnostics remain off; the isolated UI gameplay kit also leaves trace off and relies on observed counts/screenshots for that manual step.
+
+The first isolated UI harness attempts failed because the game executable does not support `--path` and because of fixture-only script naming/preload errors. They produced no passing assertions and are excluded. The corrected runner uses an adjacent pack, checks fresh results/error output, and is the passing run described above. These were harness issues, not repaired production defects.
+
 ## Prepared 0.4.7 release, 11 November 2026
 
 The manually played `0.4.7-vtk-contract.1` candidate is the gameplay baseline. Fresh review identified a nonblocking callback-validity/arity gap: a marker-v1 script with changed parameter counts could pass structural recognition while its VTK callback silently did nothing. The prepared package adds a v1-only guard for valid standard callbacks with the agreed 4/2/2 argument counts and negative fixtures. This does not change the independent native final-blow witness. All other runtime scripts, icons and licenses retain the played candidate bytes; version metadata and changelog are updated. The exact final archive subsequently completed the light human gameplay smoke described below; the guard also remains covered by native regression. Release preparation is not publication or permission to merge.

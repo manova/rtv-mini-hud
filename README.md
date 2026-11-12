@@ -2,7 +2,17 @@
 
 A read-only status HUD for Road to Vostok and Metro Mod Loader.
 
-This prepared 0.4.7 release adds VTK observation-contract v1 compatibility. It accepts exactly the integer `OBSERVER_CONTRACT = 1` on the live VTKHooks script, with concrete callback, registration, feed, and loader checks. UI or unrelated VTK source changes no longer require updating hashes for contract v1. Unknown markers and unexpected death callbacks/listeners remain unsupported.
+## Prepared 0.4.8: optional cells
+
+The Time-slot clock remains the foundation. MCM now has independent **Show trader timer** and **Show kill counter** settings. Both default to on, including upgrades with no saved value for the new keys. Hide either for a two-cell row, or both for a compact clock-only panel. The existing watch requirement, unavailable placeholder, optional equipment bypass, Toggle/Always on modes, saved shortcut, scale and placement remain unchanged.
+
+These are presentation options: kill tracking, attribution safeguards and reset rules continue while the counter is hidden. Hiding the trader timer does not modify native timers. This is not a way to disable kill-observer hooks or bypass compatibility checks. Source changes are confined to Settings and Panel, plus release metadata. The 0.4.7 compatibility information below remains applicable.
+
+This is a local release candidate. Focused automated validation is recorded in [VALIDATION.md](VALIDATION.md). In-game acceptance, any external review/public CI, and publication remain pending. No game, loader, companion mods, profile or test artifacts are distributed in the VMZ.
+
+## Compatibility baseline
+
+The 0.4.7 compatibility baseline adds VTK observation-contract v1 compatibility. It accepts exactly the integer `OBSERVER_CONTRACT = 1` on the live VTKHooks script, with concrete callback, registration, feed, and loader checks. UI or unrelated VTK source changes no longer require updating hashes for contract v1. Unknown markers and unexpected death callbacks/listeners remain unsupported.
 
 The independent native final-blow observer is unchanged: no VTK counter, assist window, signal payload, or kill attribution is imported. The exact-source fallback for VTK 5.5.1, Murdie Lava Lamps 1.1.2, and AI Actually Loots 1.2.0 remains. Exact Metro 3.4.2 and 3.5.0 loader/wrapper families remain required.
 
@@ -14,7 +24,7 @@ Run `python tools/build.py`. The deterministic VMZ is written to `dist/`. Entrie
 
 ## Verification
 
-Run `python -m unittest discover -s tests -v` for package checks. Native regression tests need separately obtained game/loader/companion-mod inputs and are described in `tests/native/README.md`. They use modeled combat, not gameplay. The previous 0.4.6 release had focused Metro 3.4.2 and 3.5.0 gameplay passes. Those remain separate historical regression evidence. See VALIDATION.md for the new test scope and the separate Lava-associated shutdown fault.
+Run `python -m unittest discover -s tests -v` for package checks. Run `python tools/run_ui_tests.py --engine <licensed-local-engine.exe>` for isolated Godot display and settings tests; see `tests/ui/README.md`. Native regression tests need separately obtained game/loader/companion-mod inputs and are described in `tests/native/README.md`. They use modeled combat, not gameplay. The previous 0.4.6 release had focused Metro 3.4.2 and 3.5.0 gameplay passes. Those remain separate historical regression evidence. See VALIDATION.md for the new test scope and the separate Lava-associated shutdown fault.
 
 ## Licensing
 

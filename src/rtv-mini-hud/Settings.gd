@@ -28,21 +28,29 @@ static func defaults() -> ConfigFile:
 		"altPressed": false, "controlPressed": false, "metaPressed": false, "shiftPressed": false,
 		"menu_pos": 3,
 	})
+	config.set_value("Bool", "show_trader_timer", {
+		"name": "Show trader timer", "tooltip": "Show the current-area trader timer cell. Hiding it compacts the HUD and does not change native trader timers.",
+		"default": true, "value": true, "menu_pos": 8,
+	})
+	config.set_value("Bool", "show_kill_counter", {
+		"name": "Show kill counter", "tooltip": "Show verified player kills. Hiding the cell compacts the HUD; tracking continues with the same attribution and reset rules.",
+		"default": true, "value": true, "menu_pos": 9,
+	})
 	config.set_value("Bool", "orange", {
 		"name": "Orange trader variant", "tooltip": "Tint only the trader icon and value orange for comparison.",
-		"default": false, "value": false, "menu_pos": 8,
+		"default": false, "value": false, "menu_pos": 10,
 	})
 	config.set_value("Bool", "cumulative_kills", {
 		"name": "Cumulative session kills", "tooltip": "Off: current map visit, reset on reload or death. On: all verified kills since game launch. Neither total is saved.",
-		"default": false, "value": false, "menu_pos": 9,
+		"default": false, "value": false, "menu_pos": 11,
 	})
 	config.set_value("Bool", "show_without_watch", {
 		"name": "Show clock without time equipment", "tooltip": "Off: requires an item equipped in the Time slot, such as a Tactical Watch or Alarm Clock. On: show native time without time equipment.",
-		"default": false, "value": false, "menu_pos": 10,
+		"default": false, "value": false, "menu_pos": 12,
 	})
 	config.set_value("Bool", "attribution_trace", {
 		"name": "Diagnostic kill trace", "tooltip": "Optional local damage attribution log. No combat changes. Stops after 2048 records per game launch; capture after exit. Off for ordinary use.",
-		"default": false, "value": false, "menu_pos": 11,
+		"default": false, "value": false, "menu_pos": 13,
 	})
 	for option in [
 		["scale", "HUD scale (%)", "Size of the compact row.", 100, 65, 180, 5, 4],
@@ -104,6 +112,10 @@ static func normalized(config: ConfigFile) -> Dictionary:
 		"opacity": _number(config, "opacity", 42, 0, 90) / 100.0,
 		"orange": orange is Dictionary and orange.get("value", false) == true,
 	}
+	# Missing or malformed visibility entries retain the released three-cell HUD.
+	for key in ["show_trader_timer", "show_kill_counter"]:
+		var option = config.get_value("Bool", key, {})
+		layout[key] = option.value if option is Dictionary and typeof(option.get("value")) == TYPE_BOOL else true
 	var state := {"enabled": true, "event": InputEventKey.new(), "layout": layout,
 		"cumulative_kills": false, "show_without_watch": false, "attribution_trace": false,
 		"display_mode": Model.MODE_TOGGLE}
@@ -186,6 +198,6 @@ static func install(owner: Node) -> void:
 					owner.apply_config(defaults())
 					return
 			helper.RegisterConfiguration(MOD_ID, "Mini HUD", CONFIG_DIR,
-				"Native Time-slot clock, current-area trader timers and verified player kills. Toggle or automatic outdoor display; shelters, menus and transitions remain hidden.",
+				"Native Time-slot clock with optional trader timer and verified player kill cells. Toggle or automatic outdoor display; shelters, menus and transitions remain hidden.",
 				{"config.ini": owner.apply_config}, owner)
 	owner.apply_config(config)

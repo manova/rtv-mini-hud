@@ -9,6 +9,7 @@ const BASE_HEIGHT := 82.0
 const ORANGE := Color("#e3a45a")
 var panel: PanelContainer
 var row: HBoxContainer
+var _cells: Array[VBoxContainer] = []
 var values: Array[Label] = []
 var icons: Array[TextureRect] = []
 var badges: Array[TextureRect] = []
@@ -47,6 +48,7 @@ func _ready() -> void:
 		cell.add_theme_constant_override("separation", 5)
 		_passthrough(cell)
 		row.add_child(cell)
+		_cells.append(cell)
 		var icon_area := Control.new()
 		icon_area.custom_minimum_size.y = 27
 		_passthrough(icon_area)
@@ -69,6 +71,7 @@ func _ready() -> void:
 		cell.add_child(value)
 		values.append(value)
 	get_viewport().size_changed.connect(_layout)
+	_apply_cell_visibility()
 	_layout()
 	hide()
 
@@ -103,7 +106,15 @@ func configure(options: Dictionary) -> void:
 	if not is_node_ready():
 		return
 	_style.bg_color.a = _options.opacity
+	_apply_cell_visibility()
 	_layout()
+
+func _apply_cell_visibility() -> void:
+	# Keep stable data indices and the clock foundation. Presentation only:
+	# hidden cells still receive readings, and no observer or timer is disabled.
+	_cells[0].show()
+	_cells[1].visible = _options.get("show_trader_timer", true)
+	_cells[2].visible = _options.get("show_kill_counter", true)
 
 func clear() -> void:
 	for value in values:
@@ -129,7 +140,8 @@ func _layout() -> void:
 	if not is_instance_valid(panel):
 		return
 	panel.reset_size()
-	var extent := Vector2(maxf(CELL_WIDTH * 3 + 16, panel.get_combined_minimum_size().x),
+	var visible_count := 1 + int(_options.get("show_trader_timer", true)) + int(_options.get("show_kill_counter", true))
+	var extent := Vector2(maxf(CELL_WIDTH * visible_count + 16, panel.get_combined_minimum_size().x),
 		maxf(BASE_HEIGHT, panel.get_combined_minimum_size().y))
 	var viewport := get_viewport().get_visible_rect().size
 	var placement := layout_rect(viewport, extent, _options)
