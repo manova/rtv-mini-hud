@@ -28,6 +28,14 @@ class PackageTests(unittest.TestCase):
   self.assertIn('if constants.has("OBSERVER_CONTRACT"):',s)
   observer=(ROOT/'src/rtv-mini-hud/KillObserver.gd').read_text()
   self.assertNotIn('get_kill_count',observer);self.assertNotIn('kill_event.connect',observer)
+ def test_optional_cells_are_presentation_only(self):
+  settings=(ROOT/'src/rtv-mini-hud/Settings.gd').read_text()
+  panel=(ROOT/'src/rtv-mini-hud/Panel.gd').read_text()
+  for key in ['show_trader_timer','show_kill_counter']:
+   self.assertRegex(settings, r'(?s)config\.set_value\("Bool", "'+key+r'", \{.*?"default": true, "value": true')
+   self.assertIn(key,panel)
+   for path in (ROOT/'src/rtv-mini-hud').glob('*.gd'):
+    if path.name not in ['Settings.gd','Panel.gd']:self.assertNotIn(key,path.read_text(),path.name)
  def test_native_boundary(self):
   s=(ROOT/'src/rtv-mini-hud/KillObserver.gd').read_text()
   body=s.split('func _death_native_after(',1)[1].split('func _death_after(',1)[0]

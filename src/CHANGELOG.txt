@@ -1,3 +1,18 @@
+Mini HUD 0.4.8
+2026-11-12
+
+Adds independent Show trader timer and Show kill counter options in MCM.
+Both default to on, preserving the existing three-cell HUD on fresh installs
+and upgrades. Hide either cell for a compact two-cell row, or both for a
+clock-only panel. The clock still follows the existing Time-slot equipment
+requirement and Show clock without time equipment option.
+
+These are display controls only. Hiding the kill counter does not stop its
+tracking, reset counts, disable hooks, or change attribution compatibility.
+Hiding the trader cell does not modify native trader timers. Existing display
+modes, saved shortcuts, scale, placement and watch preferences are preserved.
+The 0.4.7 observer-contract and legacy compatibility behavior is unchanged.
+
 Mini HUD 0.4.7
 2026-11-11
 
